@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Aerolínea{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 text-center">
+        <h1 class="display-5 mb-4">Bienvenido al sistema de gestión de aerolínea</h1>
+
+        {% if user.is_authenticated %}
+            <p class="lead">Hola <strong>{{ user.username }}</strong> - Rol: <span class="badge bg-primary text-uppercase">{{ user.perfil }}</span></p>
+            {# <a href="{% url 'logout' %}" class="btn btn-outline-danger mt-3">Cerrar sesión</a> #}
+            {% if user.perfil == 'empleado' %}
+                <a href="{% url 'panel_empleado' %}" class="btn btn-outline-primary mt-3 ms-2">Gestión de vuelos</a>
+            {% endif %}
+        {% else %}
+            <div class="d-inline-block text-center">
+                <p class="lead mb-3">Iniciá sesión o registrate para comenzar</p>
+                <a href="{% url 'login' %}" class="btn btn-primary mt-2 px-4">Iniciar sesión</a>
+                <a href="{% url 'register' %}" class="btn btn-outline-secondary mt-2 px-4">Registrarse</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

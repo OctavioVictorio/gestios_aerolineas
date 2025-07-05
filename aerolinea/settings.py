@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#extender auth user model
+AUTH_USER_MODEL = 'home.Usuario'
 
 # Application definition
 
@@ -39,8 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #apps propias
-    'gestion_aerolinea',
-    'usuarios'
+    'home',
+    'gestion_aerolinea'
+    
 ]
 
 MIDDLEWARE = [
@@ -112,6 +115,15 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+LANGUAGES = [
+    ("en", "English"),
+    ("es", "Español"),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale",
+]
+
 USE_TZ = True
 
 
@@ -119,8 +131,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Archivos subidos
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
