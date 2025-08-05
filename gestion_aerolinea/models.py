@@ -1,5 +1,5 @@
 from django.db import models
-
+from home.models import Usuario 
 class Avion(models.Model):
     modelo = models.CharField(max_length=100)
     capacidad = models.IntegerField()
@@ -15,7 +15,7 @@ class Vuelo(models.Model):
     destino = models.CharField(max_length=100)
     fecha_salida = models.DateTimeField()
     fecha_llegada = models.DateTimeField()
-    duracion = models.DurationField()
+    duracion = models.DurationField(blank=True, null=True)
     estado = models.CharField(max_length=20, choices=[
         ('programado', 'Programado'),
         ('cancelado', 'Cancelado'),
@@ -23,10 +23,17 @@ class Vuelo(models.Model):
         ('finalizado', 'Finalizado'),
     ])
     precio_base = models.DecimalField(max_digits=10, decimal_places=2)
+    avion = models.ForeignKey(Avion, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Vuelo de {self.origen} a {self.destino} - {self.fecha_salida.strftime('%Y-%m-%d %H:%M')}"
+        return f"Vuelo de {self.origen} a {self.destino} ({self.fecha_salida.date()})"
     
+    def save(self, *args, **kwargs):
+        if self.fecha_llegada < self.fecha_salida:
+            raise ValueError("La fecha de llegada no puede ser anterior a la fecha de salida.")
+        elif self.duracion is None:
+            self.duracion = self.fecha_llegada - self.fecha_salida
+        super().save(*args, **kwargs)
 
 class Pasajero(models.Model):
     nombre = models.CharField(max_length=100)
@@ -73,6 +80,11 @@ class Reserva(models.Model):
     vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name='reservas')
     pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, related_name='reservas')
     asiento = models.OneToOneField(Asiento, on_delete=models.CASCADE, related_name='reserva')
+    usuario_reserva = models.ForeignKey(
+        Usuario, 
+        on_delete=models.CASCADE, 
+        related_name='reservas_creadas'
+    )
     estado = models.CharField(max_length=20, choices=[
         ('pendiente', 'Pendiente'),
         ('confirmada', 'Confirmada'),
