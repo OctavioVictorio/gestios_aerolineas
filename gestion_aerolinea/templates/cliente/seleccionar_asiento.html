@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Seleccionar Asiento para el {{ vuelo }}</h2>
+
+{% if asientos %}
+    <ul>
+        {% for asiento in asientos %}
+            <li>
+                Asiento {{ asiento.numero }} - {{ asiento.get_tipo_display }} 
+                <form action="{% url 'crear_reserva' vuelo.id asiento.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Reservar</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay asientos disponibles para este vuelo.</p>
+{% endif %}
+{% endblock %}

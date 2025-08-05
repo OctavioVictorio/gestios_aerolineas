@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Panel del Cliente</h1>
+<p>Bienvenido, {{ request.user.username }}</p>
+
+<ul>
+    <li><a href="{% url 'listar_vuelos_cliente' %}">Ver vuelos disponibles</a></li>
+    <li><a href="#">Mis reservas</a></li>
+</ul>
+{% endblock %}

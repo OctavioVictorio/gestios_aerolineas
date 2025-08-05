@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Vuelos disponibles</h2>
+
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="border: 1px solid #ccc; padding: 8px;">Origen</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Destino</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Fecha Salida</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Fecha Llegada</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Duración</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Estado</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Avión</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Precio Base</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Acciones</th> </tr>
+    </thead>
+    <tbody>
+        {% for vuelo in vuelos %}
+        <tr>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.origen }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.destino }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.fecha_salida }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.fecha_llegada }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.duracion }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.estado }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.avion.modelo }}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">{{ vuelo.precio_base }}</td>
+            
+            <td style="border: 1px solid #ccc; padding: 8px;">
+                <a href="{% url 'seleccionar_asiento' vuelo_id=vuelo.id %}">
+                    Seleccionar Asiento
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9" style="text-align: center; padding: 8px;">No hay vuelos disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
