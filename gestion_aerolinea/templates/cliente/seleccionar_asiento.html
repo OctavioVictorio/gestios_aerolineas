@@ -1,21 +1,164 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seleccionar Asiento{% endblock %}
 
 {% block content %}
-<h2>Seleccionar Asiento para el {{ vuelo }}</h2>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'detalles_vuelo' vuelo_id=vuelo.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i> Volver a Detalles
+        </a>
+    </div>
 
-{% if asientos %}
-    <ul>
-        {% for asiento in asientos %}
-            <li>
-                Asiento {{ asiento.numero }} - {{ asiento.get_tipo_display }} 
-                <form action="{% url 'crear_reserva' vuelo.id asiento.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Reservar</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No hay asientos disponibles para este vuelo.</p>
-{% endif %}
+    <div class="text-center mb-5">
+        <h1 class="display-6 fw-bold text-primary">Seleccionar Asiento</h1>
+        <p class="lead text-muted mt-2">Vuelo de <span class="fw-bold">{{ vuelo.origen }}</span> a <span class="fw-bold">{{ vuelo.destino }}</span></p>
+    </div>
+
+    <div class="card shadow-lg p-5 mx-auto" style="max-width: 800px;">
+        <h5 class="text-center text-muted mb-4">Mapa de Asientos del Avión</h5>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} mb-4" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="avion-layout text-center">
+            <div class="fila d-flex justify-content-center g-2 mb-2">
+                <span class="numero-fila"></span> 
+                {% if layout_asientos %}
+                    {% for key, asientos in layout_asientos.items %}
+                        {% if forloop.first %}
+                            {% for asiento in asientos %}
+                                <span class="columna-letra">{{ forloop.counter }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% for fila, asientos_en_fila in layout_asientos.items %}
+                <div class="fila d-flex justify-content-center g-2 mb-2">
+                    <span class="numero-fila">{{ fila }}</span>
+                    {% for asiento in asientos_en_fila %}
+                        {% if asiento %}
+                            {% if asiento.estado == 'disponible' %}
+                                <a href="#" class="asiento-disponible btn btn-success p-3 mx-1" data-asiento-id="{{ asiento.id }}">
+                                    <i class="bi bi-chair"></i>
+                                </a>
+                            {% else %}
+                                <span class="asiento-ocupado btn btn-secondary p-3 mx-1 disabled" data-asiento-id="{{ asiento.id }}" title="Asiento no disponible">
+                                    <i class="bi bi-x-lg"></i>
+                                </span>
+                            {% endif %}
+                        {% else %}
+                            <div class="espacio-vacio p-3 mx-1"></div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="legend text-center mt-4 mb-5">
+            <span class="badge bg-success p-2 mx-2"><i class="bi bi-chair"></i> Disponible</span>
+            <span class="badge bg-secondary p-2 mx-2"><i class="bi bi-x-lg"></i> No Disponible</span>
+            <span class="badge bg-primary p-2 mx-2"><i class="bi bi-check-lg"></i> Seleccionado</span>
+        </div>
+
+        <form id="reservaForm" action="{% url 'seleccionar_asiento' vuelo_id=vuelo.id %}" method="post" class="mt-4" novalidate>
+            {% csrf_token %}
+        
+            <input type="hidden" id="id_asiento" name="asiento" value="">
+
+            <div class="mb-3">
+                <label for="id_pasajero" class="form-label">Seleccionar Pasajero:</label>
+                {{ form.pasajero }}
+                {% if form.pasajero.errors %}
+                    <div class="invalid-feedback d-block">{{ form.pasajero.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" id="submitBtn" class="btn btn-primary w-100 mt-3" disabled>
+                <i class="bi bi-bookmark-plus-fill me-2"></i> Reservar Asiento
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .avion-layout .numero-fila {
+        width: 30px;
+        text-align: right;
+        font-weight: bold;
+        color: #6c757d;
+        margin-right: 1rem;
+    }
+    .avion-layout .columna-letra {
+        width: 40px;
+        text-align: center;
+        font-weight: bold;
+        color: #6c757d;
+        margin: 0 4px;
+    }
+    .avion-layout .fila {
+        align-items: center;
+    }
+    .avion-layout .asiento-disponible, .avion-layout .asiento-ocupado {
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+    }
+    .avion-layout .asiento-disponible:hover {
+        opacity: 0.8;
+    }
+    .avion-layout .asiento-seleccionado {
+        background-color: #0d6efd !important;
+        color: white;
+    }
+    .avion-layout .espacio-vacio {
+        width: 40px;
+    }
+    .legend .badge {
+        font-size: 0.9em;
+    }
+</style>
+
+<script>
+    const asientos = document.querySelectorAll('.asiento-disponible');
+    const submitBtn = document.getElementById('submitBtn');
+    const asientoIdInput = document.getElementById('id_asiento');
+    const pasajeroSelect = document.getElementById('id_pasajero');
+    
+    const checkFormValidity = () => {
+        if (asientoIdInput.value && pasajeroSelect.value) {
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+        }
+    };
+    
+    asientos.forEach(asiento => {
+        asiento.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            document.querySelectorAll('.asiento-seleccionado').forEach(selected => {
+                selected.classList.remove('asiento-seleccionado', 'btn-primary');
+                selected.classList.add('btn-success');
+            });
+            
+            asiento.classList.add('asiento-seleccionado', 'btn-primary');
+            asiento.classList.remove('btn-success');
+            
+            asientoIdInput.value = asiento.dataset.asientoId;
+            checkFormValidity();
+        });
+    });
+    
+    pasajeroSelect.addEventListener('change', checkFormValidity);
+
+    checkFormValidity();
+</script>
 {% endblock %}

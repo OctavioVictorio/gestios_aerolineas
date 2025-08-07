@@ -25,7 +25,8 @@ class Avion(models.Model):
                         estado='disponible',
                         tipo='economica' 
                     )
-
+    def __str__(self):
+        return f"{self.modelo} ({self.capacidad} asientos)"
 
 class Vuelo(models.Model):
     origen = models.CharField(max_length=100)

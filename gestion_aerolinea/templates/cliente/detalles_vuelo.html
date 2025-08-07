@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles del Vuelo{% endblock %}
+
+{% block content %}
+<a href="{% url 'ver_vuelos_cliente' %}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left me-2"></i> Volver a Vuelos
+</a>
+<div class="container py-5">
+
+    <div class="card shadow-lg p-5 mx-auto" style="max-width: 800px;">
+        <div class="text-center mb-5">
+            <h1 class="display-6 fw-bold text-primary">Detalles del Vuelo</h1>
+            <p class="lead text-muted mt-2">Información completa sobre tu vuelo.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-geo-alt-fill fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Origen</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.origen }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-geo-alt-fill fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Destino</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.destino }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-calendar-event fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Fecha de Salida</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.fecha_salida|date:"d M Y H:i" }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-calendar-check fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Fecha de Llegada</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.fecha_llegada|date:"d M Y H:i" }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-clock-fill fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Duración</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.duracion }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-info-circle-fill fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Estado</small>
+                        <h5 class="fw-bold mb-0"><span class="badge bg-info text-dark rounded-pill">{{ vuelo.estado }}</span></h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-truck fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Avión</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.avion.modelo }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-people-fill fs-4 text-info me-3"></i>
+                    <div>
+                        <small class="text-muted">Capacidad Total</small>
+                        <h5 class="fw-bold mb-0">{{ vuelo.avion.capacidad }} asientos</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 text-center">
+            <a href="{% url 'seleccionar_asiento' vuelo_id=vuelo.id %}" class="btn btn-success btn-lg px-5 shadow-sm">
+                <i class="bi bi-grid me-2"></i> Seleccionar Asiento
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
