@@ -6,6 +6,9 @@ from .views import (
     SeleccionarAsientoView,
     VerReservasClienteView,
     CancelarReservaView,
+    GestionarPasajerosView,
+    EditarPasajeroView,
+    EliminarPasajeroView,
 )
 
 urlpatterns = [
@@ -22,5 +25,10 @@ urlpatterns = [
     path('cliente/reservas/<str:filtro>/', VerReservasClienteView.as_view(), name='ver_reservas_cliente_filtradas'),
     path('cliente/reservas/<int:reserva_id>/cancelar/', CancelarReservaView.as_view(), name='cancelar_reserva'),
 
+    # Rutas para Clientes (pasajeros)
+    path('pasajeros/', GestionarPasajerosView.as_view(), name='gestionar_pasajeros'),
+    path('pasajeros/editar/<int:pasajero_id>/', EditarPasajeroView.as_view(), name='editar_pasajero'),
+    path('pasajeros/eliminar/<int:pasajero_id>/', EliminarPasajeroView.as_view(), name='eliminar_pasajero'),
     
+
 ]

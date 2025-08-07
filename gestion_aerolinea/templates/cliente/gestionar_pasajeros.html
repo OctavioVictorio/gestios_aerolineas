@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestionar Pasajeros{% endblock %}
+
+{% block content %}
+<a href="{% url 'panel_cliente' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver
+</a>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Gestión de Pasajeros</h1>
+        <p class="lead text-muted mt-3">Aquí puedes ver, agregar, editar y eliminar pasajeros asociados a tu cuenta.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <h2 class="h4 fw-bold mb-3">Tus Pasajeros Registrados</h2>
+            <div class="list-group shadow-sm">
+                {% for pasajero in pasajeros %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ pasajero.nombre }} {{ pasajero.apellido }}</h5>
+                        <small class="text-muted">{{ pasajero.get_tipo_documento_display }}: {{ pasajero.numero_documento }}</small>
+                    </div>
+                    <div>
+                        <a href="{% url 'editar_pasajero' pasajero.id %}" class="btn btn-sm btn-outline-primary me-2" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" data-bs-toggle="modal" data-bs-target="#eliminarModal-{{ pasajero.id }}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="list-group-item text-center text-muted">
+                    No tienes pasajeros registrados.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <h2 class="h4 fw-bold mb-3">Registrar Nuevo Pasajero</h2>
+            <div class="card shadow-sm p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">{{ field.errors|first }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success w-100 mt-3">
+                        <i class="bi bi-person-plus-fill me-2"></i> Registrar Pasajero
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for pasajero in pasajeros %}
+<div class="modal fade" id="eliminarModal-{{ pasajero.id }}" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar a **{{ pasajero.nombre }} {{ pasajero.apellido }}**?
+                Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form action="{% url 'eliminar_pasajero' pasajero.id %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

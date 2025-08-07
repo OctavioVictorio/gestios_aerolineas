@@ -1,11 +1,47 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h1>Panel del Cliente</h1>
-<p>Bienvenido, {{ request.user.username }}</p>
+{% block title %}Panel de Cliente{% endblock %}
 
-<ul>
-    <li><a href="{% url 'listar_vuelos_cliente' %}">Ver vuelos disponibles</a></li>
-    <li><a href="#">Mis reservas</a></li>
-</ul>
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Bienvenido, <span class="text-dark">{{ request.user.username }}</span></h1>
+        <h2 class="fs-4 fw-light text-muted">Viaja Donde Desees</h2>
+    </div>
+
+    <div class="row justify-content-center g-4">
+        <div class="col-md-4">
+            <a href="{% url 'ver_vuelos_cliente' %}" class="text-decoration-none">
+                <div class="card text-center border-0 shadow-sm hover-shadow rounded-4 p-4 bg-primary text-white transition">
+                    <i class="bi bi-airplane-fill display-4 mb-3"></i>
+                    <h5 class="fw-bold">Ver Vuelos Disponibles</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'ver_reservas_cliente' %}" class="text-decoration-none">
+                <div class="card text-center border-0 shadow-sm hover-shadow rounded-4 p-4 bg-success text-white transition">
+                    <i class="bi bi-journal-bookmark-fill display-4 mb-3"></i>
+                    <h5 class="fw-bold">Ver Mis Reservas</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'gestionar_pasajeros' %}" class="text-decoration-none">
+                <div class="card text-center border-0 shadow-sm hover-shadow rounded-4 p-4 bg-info text-white transition">
+                    <i class="bi bi-person-plus-fill display-4 mb-3"></i>
+                    <h5 class="fw-bold">Gestionar Pasajero</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2) !important;
+        transform: translateY(-5px);
+        transition: all 0.3s ease-in-out;
+    }
+</style>
 {% endblock %}
