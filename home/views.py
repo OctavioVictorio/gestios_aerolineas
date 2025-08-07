@@ -7,7 +7,14 @@ from home.forms import LoginForm, RegisterForm
 
 class HomeView(View):
     def get(self, request):
-        return render(request, "index.html")
+        if request.user.is_authenticated:
+            if request.user.perfil == 'cliente':
+                return redirect('panel_cliente')
+            elif request.user.perfil == 'empleado':
+                return redirect('panel_empleado')
+            elif request.user.perfil == 'admin':
+                return redirect('panel_admin')
+        return render(request, 'index.html')
 
 
 class LoginView(View):
