@@ -14,8 +14,9 @@ class AsientoInline(admin.TabularInline):
 
 @admin.register(Avion)
 class AvionAdmin(admin.ModelAdmin):
-    list_display = ('modelo', 'capacidad', 'filas', 'columnas')
-    inlines = [AsientoInline] 
+    list_display = ('modelo', 'filas', 'columnas', 'capacidad')
+    fields = ('modelo', 'filas', 'columnas', 'capacidad')
+    readonly_fields = ('capacidad',)
     search_fields = ('modelo',)
 
 
@@ -37,7 +38,7 @@ class PasajeroAdmin(admin.ModelAdmin):
 class AsientoAdmin(admin.ModelAdmin):
     list_display = ('avion', 'numero', 'fila', 'columna', 'tipo', 'estado')
     list_filter = ('tipo', 'estado', 'avion')
-    search_fields = ('numero',)
+    search_fields = ('numero', 'avion_modelo')
 
 
 @admin.register(Reserva)
