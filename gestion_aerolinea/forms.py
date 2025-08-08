@@ -1,5 +1,5 @@
 from django import forms
-from .models import Pasajero, Reserva, Vuelo
+from .models import Avion, Pasajero, Reserva, Vuelo
 
 
 class ReservaForm(forms.ModelForm):
@@ -66,3 +66,14 @@ class VueloForm(forms.ModelForm):
                 )
         
         return cleaned_data
+
+
+class AvionForm(forms.ModelForm):
+    class Meta:
+        model = Avion
+        fields = ['modelo', 'filas', 'columnas'] 
+        widgets = {
+            'modelo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej. Boeing 747'}),
+            'filas': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej. 50'}),
+            'columnas': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej. 6'}),
+        }

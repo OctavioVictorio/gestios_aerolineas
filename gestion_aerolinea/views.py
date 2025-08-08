@@ -5,8 +5,8 @@ from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .forms import PasajeroForm, ReservaForm, VueloForm
-from .models import Asiento, Pasajero, Reserva, Vuelo 
+from .forms import AvionForm, PasajeroForm, ReservaForm, VueloForm
+from .models import Asiento, Avion, Pasajero, Reserva, Vuelo
 
 
 def es_cliente(user):
@@ -309,3 +309,63 @@ class CrearVueloView(View):
             return redirect('gestionar_vuelos_empleado')
         
         return render(request, 'empleado/crear_vuelo.html', {'form': form})
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class GestionarAvionesView(View):
+    def get(self, request):
+        aviones = Avion.objects.all().order_by('modelo')
+        return render(request, 'empleado/gestionar_aviones.html', {'aviones': aviones})
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class CrearAvionView(View):
+    def get(self, request):
+        form = AvionForm()
+        return render(request, 'empleado/crear_avion.html', {'form': form})
+    
+    def post(self, request):
+        form = AvionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Avión creado exitosamente.")
+            return redirect('gestionar_aviones_empleado')
+        
+        return render(request, 'empleado/crear_avion.html', {'form': form})
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class EditarAvionView(View):
+    def get(self, request, avion_id):
+        avion = get_object_or_404(Avion, id=avion_id)
+        form = AvionForm(instance=avion)
+        return render(request, 'empleado/editar_avion.html', {'form': form, 'avion': avion})
+    
+    def post(self, request, avion_id):
+        avion = get_object_or_404(Avion, id=avion_id)
+        form = AvionForm(request.POST, instance=avion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Avión editado exitosamente.")
+            return redirect('gestionar_aviones_empleado')
+        
+        return render(request, 'empleado/editar_avion.html', {'form': form, 'avion': avion})
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class EliminarAvionView(View):
+    def post(self, request, avion_id):
+        avion = get_object_or_404(Avion, id=avion_id)
+        try:
+            avion.delete()
+            messages.success(request, f"Avión '{avion.modelo}' eliminado exitosamente.")
+        except Exception as e:
+            messages.error(request, f"Error al eliminar el avión: {e}")
+        
+        return redirect('gestionar_aviones_empleado')
+
+

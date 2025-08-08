@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Aviones{% endblock %}
+
+{% block content %}
+<a href="{% url 'panel_empleado' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver
+</a>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Gestión de Aviones</h1>
+        <a href="{% url 'crear_avion_empleado' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle me-2"></i> Crear Nuevo Avión
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="h4 fw-bold mb-3">Flota Existente</h2>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle shadow-sm">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">Modelo</th>
+                            <th scope="col">Capacidad</th>
+                            <th scope="col">Filas</th>
+                            <th scope="col">Columnas</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for avion in aviones %}
+                        <tr>
+                            <td>{{ avion.modelo }}</td>
+                            <td>{{ avion.capacidad }}</td>
+                            <td>{{ avion.filas }}</td>
+                            <td>{{ avion.columnas }}</td>
+                            <td>
+                                <a href="{% url 'editar_avion_empleado' avion.id %}" class="btn btn-sm btn-outline-primary me-2" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                                        data-avion-id="{{ avion.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No hay aviones registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este avión? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var avionId = button.getAttribute('data-avion-id');
+            var form = confirmDeleteModal.querySelector('#deleteForm');
+            form.action = `/empleado/aviones/eliminar/${avionId}/`;
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
