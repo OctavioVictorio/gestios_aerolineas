@@ -71,22 +71,40 @@
             <i class="bi bi-airplane-fill me-2"></i> Aerolínea
         </a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'ver_vuelos_cliente' %}">
-                    <i class="bi bi-airplane-engines"></i> Vuelos
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'gestionar_pasajeros' %}">
-                    <i class="bi bi-person-vcard"></i> Pasajeros
-                </a>
-            </li>
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'ver_reservas_cliente' %}">
-                    <i class="bi bi-ticket-perforated"></i> Mis Reservas
-                </a>
-            </li>
+            {% if user.is_authenticated and user.perfil == 'empleado' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gestionar_reservas_empleado' %}">
+                        <i class="bi bi-calendar-check-fill"></i> Reservas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gestionar_vuelos_empleado' %}">
+                        <i class="bi bi-airplane-engines-fill"></i> Vuelos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-people-fill"></i> Empleados
+                    </a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ver_vuelos_cliente' %}">
+                        <i class="bi bi-airplane-engines"></i> Vuelos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gestionar_pasajeros' %}">
+                        <i class="bi bi-person-vcard"></i> Pasajeros
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ver_reservas_cliente' %}">
+                        <i class="bi bi-ticket-perforated"></i> Mis Reservas
+                    </a>
+                </li>
+                {% endif %}
             {% endif %}
         </ul>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

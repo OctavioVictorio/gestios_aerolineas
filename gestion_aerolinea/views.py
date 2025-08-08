@@ -1,16 +1,28 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .forms import PasajeroForm, ReservaForm
+from .forms import PasajeroForm, ReservaForm, VueloForm
 from .models import Asiento, Pasajero, Reserva, Vuelo 
 
 
+def es_cliente(user):
+    return user.is_authenticated and user.perfil == 'cliente'
+
+def es_empleado(user):
+    return user.is_authenticated and user.perfil == 'empleado'
+
+def es_admin(user):
+    return user.is_authenticated and user.perfil == 'admin'
+
+def es_empleado_o_admin(user):
+    return user.is_authenticated and (user.perfil == 'empleado' or user.perfil == 'admin')
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_cliente), name='dispatch')
 class PanelClienteView(View):
     def get(self, request):
         if not request.user.is_authenticated:
@@ -193,3 +205,107 @@ class EliminarPasajeroView(View):
         return redirect('gestionar_pasajeros')
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado), name='dispatch')
+class PanelEmpleadoView(View):
+    def get(self, request):
+        return render(request, 'empleado/panel_empleado.html')
+    
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class GestionarReservasEmpleadoView(View):
+    def get(self, request, filtro=None):
+        if filtro:
+            reservas = Reserva.objects.filter(estado=filtro).order_by('-fecha_reserva')
+        else:
+            reservas = Reserva.objects.all().order_by('-fecha_reserva')
+        
+        return render(request, 'empleado/gestionar_reservas.html', {
+            'reservas': reservas,
+            'filtro_activo': filtro,
+        })
+    
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class ConfirmarReservaView(View):
+    def post(self, request, reserva_id):
+        reserva = get_object_or_404(Reserva, id=reserva_id)
+        if reserva.estado == 'pendiente':
+            reserva.estado = 'confirmada'
+            reserva.save()
+            messages.success(request, f"La reserva {reserva.codigo_reserva} ha sido confirmada con éxito.")
+        else:
+            messages.warning(request, f"La reserva {reserva.codigo_reserva} ya no está en estado pendiente.")
+        
+        # Redirigimos al usuario a la página de reservas del empleado, manteniendo el filtro activo
+        return redirect('gestionar_reservas_empleado')
+    
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class CancelarReservaEmpleadoView(View):
+    def post(self, request, reserva_id):
+        reserva = get_object_or_404(Reserva, id=reserva_id)
+        if reserva.estado != 'cancelada':
+            reserva.estado = 'cancelada'
+            reserva.save()
+            messages.success(request, f"La reserva {reserva.codigo_reserva} ha sido cancelada con éxito.")
+        else:
+            messages.warning(request, f"La reserva {reserva.codigo_reserva} ya estaba cancelada.")
+        
+        return redirect(request.META.get('HTTP_REFERER', 'gestionar_reservas_empleado'))
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class GestionarVuelosView(View):
+    def get(self, request):
+        vuelos = Vuelo.objects.all().order_by('-fecha_salida')
+        return render(request, 'empleado/gestionar_vuelos.html', {'vuelos': vuelos})
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class EditarVueloView(View):
+    def get(self, request, vuelo_id):
+        vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+        form = VueloForm(instance=vuelo)
+        return render(request, 'empleado/editar_vuelo.html', {'form': form, 'vuelo': vuelo})
+
+    def post(self, request, vuelo_id):
+        vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+        form = VueloForm(request.POST, instance=vuelo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vuelo actualizado exitosamente.")
+            return redirect('gestionar_vuelos_empleado')
+        return render(request, 'empleado/editar_vuelo.html', {'form': form, 'vuelo': vuelo})
+        
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class EliminarVueloView(View):
+    def post(self, request, vuelo_id):
+        vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+        vuelo.delete()
+        messages.success(request, "Vuelo eliminado exitosamente.")
+        return redirect('gestionar_vuelos_empleado')
+    
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class CrearVueloView(View):
+    def get(self, request):
+        form = VueloForm()
+        return render(request, 'empleado/crear_vuelo.html', {'form': form})
+    
+    def post(self, request):
+        form = VueloForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vuelo creado exitosamente.")
+            return redirect('gestionar_vuelos_empleado')
+        
+        return render(request, 'empleado/crear_vuelo.html', {'form': form})

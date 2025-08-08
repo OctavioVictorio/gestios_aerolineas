@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Reservas{% endblock %}
+
+{% block content %}
+<a href="{% url 'panel_empleado' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver 
+</a>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Gestión de Reservas</h1>
+        <p class="lead text-muted mt-3">Revisa y gestiona el estado de todas las reservas de clientes.</p>
+    </div>
+
+    <div class="d-flex justify-content-center mb-4">
+        <a href="{% url 'gestionar_reservas_empleado' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2">
+            Todas
+        </a>
+        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2">
+            Pendientes
+        </a>
+        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2">
+            Confirmadas
+        </a>
+        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2">
+            Canceladas
+        </a>
+    </div>
+
+    {% if reservas %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Vuelo</th>
+                    <th scope="col">Asiento</th>
+                    <th scope="col">Cliente / Pasajero</th>
+                    <th scope="col">Fecha de Reserva</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                <tr>
+                    <th scope="row">{{ reserva.codigo_reserva }}</th>
+                    <td>{{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</td>
+                    <td>{{ reserva.asiento.numero }}</td>
+                    <td>
+                        <strong class="text-muted">Cliente:</strong> {{ reserva.usuario_reserva.username }}<br>
+                        <strong class="text-muted">Pasajero:</strong> {{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}
+                    </td>
+                    <td>{{ reserva.fecha_reserva|date:"d M Y H:i" }}</td>
+                    <td>
+                        {% if reserva.estado == 'confirmada' %}
+                        <span class="badge bg-success rounded-pill text-uppercase p-2">
+                            {{ reserva.estado }}
+                        </span>
+                        {% elif reserva.estado == 'pendiente' %}
+                        <span class="badge bg-warning text-dark rounded-pill text-uppercase p-2">
+                            {{ reserva.estado }}
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger rounded-pill text-uppercase p-2">
+                            {{ reserva.estado }}
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if reserva.estado == 'pendiente' %}
+                        <button type="button" class="btn btn-sm btn-success" title="Confirmar Reserva" 
+                                data-bs-toggle="modal" data-bs-target="#confirmarModal" 
+                                data-reserva-id="{{ reserva.id }}">
+                            <i class="bi bi-check-lg"></i> Confirmar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger ms-2" title="Cancelar Reserva" 
+                                data-bs-toggle="modal" data-bs-target="#cancelarModal" 
+                                data-reserva-id="{{ reserva.id }}">
+                            <i class="bi bi-x-lg"></i> Cancelar
+                        </button>
+                        {% elif reserva.estado == 'confirmada' %}
+                        <button class="btn btn-sm btn-secondary disabled" title="Reserva ya confirmada">
+                            <i class="bi bi-check-lg"></i> Confirmada
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger ms-2" title="Cancelar Reserva" 
+                                data-bs-toggle="modal" data-bs-target="#cancelarModal" 
+                                data-reserva-id="{{ reserva.id }}">
+                            <i class="bi bi-x-lg"></i> Cancelar
+                        </button>
+                        {% elif reserva.estado == 'cancelada' %}
+                        <button class="btn btn-sm btn-secondary disabled" title="Reserva ya cancelada">
+                            <i class="bi bi-x-lg"></i> Cancelada
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+        <div class="alert alert-info p-4" role="alert">
+            <i class="bi bi-info-circle-fill fs-3 me-2"></i>
+            <p class="mb-0 fs-5">No hay reservas con el estado {{ filtro_activo|default:"deseado" }}.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="confirmarModal" tabindex="-1" aria-labelledby="confirmarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarModalLabel">Confirmar Reserva</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas **confirmar** esta reserva?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form id="confirmarForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cancelarModal" tabindex="-1" aria-labelledby="cancelarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelarModalLabel">Cancelar Reserva</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas **cancelar** esta reserva? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form id="cancelarForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var confirmarModal = document.getElementById('confirmarModal');
+        confirmarModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var reservaId = button.getAttribute('data-reserva-id');
+            var form = confirmarModal.querySelector('#confirmarForm');
+            form.action = `/empleado/reservas/confirmar/${reservaId}/`; 
+        });
+
+        var cancelarModal = document.getElementById('cancelarModal');
+        cancelarModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var reservaId = button.getAttribute('data-reserva-id');
+            var form = cancelarModal.querySelector('#cancelarForm');
+            form.action = `/empleado/reservas/cancelar/${reservaId}/`;
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

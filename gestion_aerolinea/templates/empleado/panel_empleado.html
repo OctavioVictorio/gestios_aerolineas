@@ -1,6 +1,39 @@
 {% extends 'base.html' %}
 
+{% block title %}Panel de Empleado{% endblock %}
+
 {% block content %}
-<h2>Panel del Empleado</h2>
-<p>Gestión de vuelos, reservas, y más.</p>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Panel de Empleado</h1>
+        <p class="lead text-muted mt-3">Bienvenido, {{ user.first_name }}. Desde aquí puedes gestionar los vuelos, reservas y otros aspectos de la aerolínea.</p>
+    </div>
+
+        <div class="row justify-content-center g-4">
+            <div class="col-md-4">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-bookmark-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Reservas</h5>
+                    <p class="card-text text-muted">Revisa y confirma las reservas de los clientes.</p>
+                    <a href="{% url 'gestionar_reservas_empleado' %}" class="btn btn-primary mt-auto">Ir a Reservas</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-airplane-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Vuelos</h5>
+                    <p class="card-text text-muted">Crea, edita y administra todos los vuelos.</p>
+                    <a href="{% url 'gestionar_vuelos_empleado' %}" class="btn btn-primary mt-auto">Ir a Vuelos</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-person-badge-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Empleados</h5>
+                    <p class="card-text text-muted">Gestiona las cuentas de otros empleados.</p>
+                    <a href="#" class="btn btn-primary mt-auto disabled" aria-disabled="true">Ir a Empleados</a>
+                </div>
+            </div>
+    </div>
+</div>
 {% endblock %}
