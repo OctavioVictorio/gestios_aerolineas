@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte de Pasajeros por Vuelo{% endblock %}
+
+{% block content %}
+<a href="{% url 'panel_empleado' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver 
+</a>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Reporte de Pasajeros por Vuelo</h1>
+        <p class="lead text-muted mt-3">Selecciona un vuelo para obtener el listado de pasajeros.</p>
+    </div>
+
+    <div class="card shadow-sm p-4 mb-5">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label for="{{ form.vuelo.id_for_label }}" class="form-label">Vuelo</label>
+                        {{ form.vuelo }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i> Generar Reporte
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if reporte_data %}
+        <div class="text-center mb-4">
+            <h2 class="h4 fw-bold">Listado de Pasajeros para el Vuelo:</h2>
+            <p class="fs-5">{{ reporte_data.vuelo.origen }} → {{ reporte_data.vuelo.destino }} (Fecha: {{ reporte_data.vuelo.fecha_salida|date:"d M Y" }})</p>
+        </div>
+        
+        {% if reporte_data.pasajeros %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle shadow-sm">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Documento</th>
+                        <th scope="col">Asiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reserva in reporte_data.reservas %}
+                    <tr>
+                        <td>{{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}</td>
+                        <td>{{ reserva.pasajero.get_tipo_documento_display }}: {{ reserva.pasajero.numero_documento }}</td>
+                        <td>{{ reserva.asiento.numero }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            No hay reservas confirmadas para este vuelo.
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

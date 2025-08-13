@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Seleccionar Pasajeros{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+        <h3 class="card-title text-center fw-bold mb-4">Seleccionar Pasajeros</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+                Continuar
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

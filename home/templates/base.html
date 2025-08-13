@@ -72,31 +72,40 @@
         </a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             {% if user.is_authenticated and user.perfil == 'empleado' %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gestionar_reservas_empleado' %}">
-                        <i class="bi bi-calendar-check-fill"></i> Reservas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gestionar_vuelos_empleado' %}">
-                        <i class="bi bi-airplane-engines-fill"></i> Vuelos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-people-fill"></i> Empleados
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gestionar_aviones_empleado' %}">
-                        <i class="bi bi-gear-fill"></i> Aviones
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'gestionar_pasajeros_empleado' %}">
-                        <i class="bi bi-gear-fill"></i> Pasajeros
-                    </a>
-                </li>
+            
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-clipboard-data-fill"></i> Gestión
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{% url 'gestionar_reservas_empleado' %}">
+                            <i class="bi bi-calendar-check-fill me-2"></i> Reservas
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'gestionar_vuelos_empleado' %}">
+                            <i class="bi bi-airplane-engines-fill me-2"></i> Vuelos
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'gestionar_aviones_empleado' %}">
+                            <i class="bi bi-gear-fill me-2"></i> Aviones
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'gestionar_pasajeros_empleado' %}">
+                            <i class="bi bi-people-fill me-2"></i> Pasajeros
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'reporte_pasajeros_vuelo' %}">
+                            <i class="bi bi-file-bar-graph-fill me-2"></i> Reportes
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'ver_vuelos_cliente' %}">
@@ -125,7 +134,9 @@
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Hola, {{ user.username }}</a>
+                    <a class="nav-link" href="{% url 'mi_perfil' %}">
+                        <i class="bi bi-person-circle me-1"></i> Hola, {{ user.first_name|default:user.username }}
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white fw-bold" href="{% url 'logout' %}">

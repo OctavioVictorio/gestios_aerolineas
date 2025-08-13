@@ -6,11 +6,12 @@
 <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-primary">Panel de Empleado</h1>
-        <p class="lead text-muted mt-3">Bienvenido, {{ user.first_name }}. Desde aquí puedes gestionar los vuelos, reservas y otros aspectos de la aerolínea.</p>
+        <p class="lead text-muted mt-3">Bienvenido, {{ request.user.username }}. Desde aquí puedes gestionar los vuelos, reservas y otros aspectos de la aerolínea.</p>
     </div>
 
-        <div class="row justify-content-center g-4">
-            <div class="col-md-4">
+    <div class="row justify-content-center g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
                     <i class="bi bi-bookmark-fill fs-1 text-primary mb-3"></i>
                     <h5 class="card-title fw-bold">Gestión de Reservas</h5>
@@ -18,7 +19,9 @@
                     <a href="{% url 'gestionar_reservas_empleado' %}" class="btn btn-primary mt-auto">Ir a Reservas</a>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
                     <i class="bi bi-airplane-fill fs-1 text-primary mb-3"></i>
                     <h5 class="card-title fw-bold">Gestión de Vuelos</h5>
@@ -26,7 +29,9 @@
                     <a href="{% url 'gestionar_vuelos_empleado' %}" class="btn btn-primary mt-auto">Ir a Vuelos</a>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
                     <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
                     <h5 class="card-title fw-bold">Gestión de Pasajeros</h5>
@@ -34,22 +39,27 @@
                     <a href="{% url 'gestionar_pasajeros_empleado' %}" class="btn btn-primary mt-auto">Ir a Pasajeros</a>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-person-badge-fill fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Empleados</h5>
-                    <p class="card-text text-muted">Gestiona las cuentas de otros empleados.</p>
-                    <a href="#" class="btn btn-primary mt-auto disabled" aria-disabled="true">Ir a Empleados</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-person-badge-fill fs-1 text-primary mb-3"></i>
+                    <i class="bi bi-gear-fill fs-1 text-primary mb-3"></i>
                     <h5 class="card-title fw-bold">Gestión de Aviones</h5>
-                    <p class="card-text text-muted">Gestiona los aviones disponibles(crear, edita o elimina).</p>
+                    <p class="card-text text-muted">Gestiona los aviones disponibles (crear, editar o eliminar).</p>
                     <a href="{% url 'gestionar_aviones_empleado' %}" class="btn btn-primary mt-auto">Ir a Aviones</a>
                 </div>
             </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-file-bar-graph-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Reportes</h5>
+                    <p class="card-text text-muted">Genera reportes de pasajeros por vuelo.</p>
+                    <a href="{% url 'reporte_pasajeros_vuelo' %}" class="btn btn-primary mt-auto">Ir a Reportes</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
