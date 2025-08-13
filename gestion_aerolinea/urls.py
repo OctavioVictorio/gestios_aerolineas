@@ -5,6 +5,7 @@ from .views import (
     ConfirmarReservaView,
     CrearAvionView,
     CrearVueloView,
+    DetallePasajeroEmpleadoView,
     DetallesVueloView,
     EditarAvionView,
     EditarPasajeroView,
@@ -14,6 +15,7 @@ from .views import (
     EliminarVueloView,
     GestionarAvionesView,    
     GestionarPasajerosView,
+    GestionarPasajerosEmpleadoView,
     GestionarReservasEmpleadoView,
     GestionarVuelosView,
     PanelClienteView,
@@ -63,4 +65,7 @@ urlpatterns = [
     path('empleado/aviones/editar/<int:avion_id>/', EditarAvionView.as_view(), name='editar_avion_empleado'),
     path('empleado/aviones/eliminar/<int:avion_id>/', EliminarAvionView.as_view(), name='eliminar_avion_empleado'),
 
+    #Rutas para Empleados (pasajeros)
+    path('empleado/pasajeros/', GestionarPasajerosEmpleadoView.as_view(), name='gestionar_pasajeros_empleado'),
+    path('empleado/pasajeros/<int:pasajero_id>/', DetallePasajeroEmpleadoView.as_view(), name='detalle_pasajero_empleado'),
 ]

@@ -369,3 +369,21 @@ class EliminarAvionView(View):
         return redirect('gestionar_aviones_empleado')
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class GestionarPasajerosEmpleadoView(View):
+    def get(self, request):
+        pasajeros = Pasajero.objects.all().order_by('apellido', 'nombre')
+        return render(request, 'empleado/gestionar_pasajeros.html', {'pasajeros': pasajeros})
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class DetallePasajeroEmpleadoView(View):
+    def get(self, request, pasajero_id):
+        pasajero = get_object_or_404(Pasajero, id=pasajero_id)
+        reservas = pasajero.reservas.all().order_by('-fecha_reserva')
+        return render(request, 'empleado/detalle_pasajero.html', {
+            'pasajero': pasajero,
+            'reservas': reservas
+        })

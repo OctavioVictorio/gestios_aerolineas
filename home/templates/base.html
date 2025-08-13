@@ -87,6 +87,16 @@
                         <i class="bi bi-people-fill"></i> Empleados
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gestionar_aviones_empleado' %}">
+                        <i class="bi bi-gear-fill"></i> Aviones
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gestionar_pasajeros_empleado' %}">
+                        <i class="bi bi-gear-fill"></i> Pasajeros
+                    </a>
+                </li>
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'ver_vuelos_cliente' %}">

@@ -28,10 +28,26 @@
             </div>
             <div class="col-md-4">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Pasajeros</h5>
+                    <p class="card-text text-muted">Revisa la información y el historial de vuelos de los pasajeros.</p>
+                    <a href="{% url 'gestionar_pasajeros_empleado' %}" class="btn btn-primary mt-auto">Ir a Pasajeros</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
                     <i class="bi bi-person-badge-fill fs-1 text-primary mb-3"></i>
                     <h5 class="card-title fw-bold">Gestión de Empleados</h5>
                     <p class="card-text text-muted">Gestiona las cuentas de otros empleados.</p>
                     <a href="#" class="btn btn-primary mt-auto disabled" aria-disabled="true">Ir a Empleados</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-person-badge-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Aviones</h5>
+                    <p class="card-text text-muted">Gestiona los aviones disponibles(crear, edita o elimina).</p>
+                    <a href="{% url 'gestionar_aviones_empleado' %}" class="btn btn-primary mt-auto">Ir a Aviones</a>
                 </div>
             </div>
     </div>
