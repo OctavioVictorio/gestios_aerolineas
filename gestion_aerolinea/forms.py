@@ -1,21 +1,34 @@
 from django import forms
-from .models import Avion, Pasajero, Reserva, Vuelo
+from .models import Avion, Pasajero, Reserva, Vuelo, Usuario
 
 
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
         fields = ['pasajero', 'asiento'] 
-    def clean(self):
-        cleaned_data = super().clean()
-        asiento = cleaned_data.get('asiento')
-        
-        if not asiento:
-            raise forms.ValidationError('Debes seleccionar un asiento.')
 
-        if asiento.estado != 'disponible':
-            raise forms.ValidationError('El asiento seleccionado no está disponible.')
-        return cleaned_data
+
+
+    
+class UsuarioForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo Electrónico',
+        }
+
+
+class CantidadPasajerosForm(forms.Form):
+    adultos = forms.IntegerField(label="Adultos (Desde 18 años)", min_value=1, initial=1)
+    menores = forms.IntegerField(label="Menores (Hasta 17 años)", min_value=0, initial=0)
 
 
 class PasajeroForm(forms.ModelForm):
@@ -77,3 +90,11 @@ class AvionForm(forms.ModelForm):
             'filas': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej. 50'}),
             'columnas': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej. 6'}),
         }
+
+
+class SeleccionarVueloForm(forms.Form):
+    vuelo = forms.ModelChoiceField(
+        queryset=Vuelo.objects.all().order_by('fecha_salida', 'origen', 'destino'),
+        label="Selecciona un vuelo",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )

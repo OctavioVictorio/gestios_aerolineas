@@ -4,8 +4,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.db import transaction
 
-from .forms import AvionForm, PasajeroForm, ReservaForm, VueloForm
+from .forms import AvionForm, CantidadPasajerosForm, PasajeroForm, VueloForm, SeleccionarVueloForm, UsuarioForm
 from .models import Asiento, Avion, Pasajero, Reserva, Vuelo
 
 
@@ -20,6 +21,36 @@ def es_admin(user):
 
 def es_empleado_o_admin(user):
     return user.is_authenticated and (user.perfil == 'empleado' or user.perfil == 'admin')
+
+@method_decorator(login_required, name='dispatch')
+class MiPerfilView(View):
+    def get(self, request):
+        user = request.user
+        usuario_form = UsuarioForm(instance=user)
+        pasajeros = Pasajero.objects.filter(usuario=user)
+
+        context = {
+            'usuario_form': usuario_form,
+            'pasajeros': pasajeros,
+        }
+        return render(request, 'mi_perfil.html', context)
+    
+    def post(self, request):
+        user = request.user
+        usuario_form = UsuarioForm(request.POST, instance=user)
+
+        if usuario_form.is_valid():
+            usuario_form.save()
+            messages.success(request, "Tu perfil de usuario ha sido actualizado.")
+            return redirect('mi_perfil')
+
+        pasajeros = Pasajero.objects.filter(usuario=user)
+        context = {
+            'usuario_form': usuario_form,
+            'pasajeros': pasajeros,
+        }
+        return render(request, 'mi_perfil.html', context)
+    
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(es_cliente), name='dispatch')
@@ -38,79 +69,138 @@ class VerVuelosClienteView(View):
         return render(request, 'cliente/ver_vuelos.html', {'vuelos': vuelos})
 
 
+@method_decorator(login_required, name='dispatch')
 class DetallesVueloView(View):
     def get(self, request, vuelo_id):
         vuelo = get_object_or_404(Vuelo, id=vuelo_id)
-        context = {
+        cantidad_pasajeros_form = CantidadPasajerosForm() # ✅ Instancia del formulario
+        return render(request, 'cliente/detalles_vuelo.html', {
             'vuelo': vuelo,
-        }
-        return render(request, 'cliente/detalles_vuelo.html', context)
+            'cantidad_pasajeros_form': cantidad_pasajeros_form, # ✅ Pasamos el formulario al contexto
+        })
 
+
+@method_decorator(login_required, name='dispatch')
+class SeleccionarPasajerosView(View):
+    def get(self, request, vuelo_id):
+        vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+        form = CantidadPasajerosForm()
+        return render(request, 'cliente/seleccionar_pasajeros.html', {'vuelo': vuelo, 'form': form})
+
+    def post(self, request, vuelo_id):
+        form = CantidadPasajerosForm(request.POST)
+        if form.is_valid():
+            total_pasajeros = form.cleaned_data['adultos'] + form.cleaned_data['menores']
+            # ✅ Guardamos la cantidad total en la sesión
+            request.session['total_pasajeros'] = total_pasajeros
+            return redirect('seleccionar_asiento', vuelo_id=vuelo_id)
+        else:
+            vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+            return render(request, 'cliente/seleccionar_pasajeros.html', {'vuelo': vuelo, 'form': form})
+        
 
 @method_decorator(login_required, name='dispatch')
 class SeleccionarAsientoView(View):
     def get(self, request, vuelo_id):
         vuelo = get_object_or_404(Vuelo, id=vuelo_id)
-        
-        asientos = Asiento.objects.filter(avion=vuelo.avion).order_by('fila', 'columna')
+        asientos_reservados_ids = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'pendiente']
+        ).values_list('asiento__id', flat=True)
+
+        asientos_avion = {asiento.id: asiento for asiento in Asiento.objects.filter(avion=vuelo.avion)}
         layout_asientos = {}
-        for asiento in asientos:
-            if asiento.fila not in layout_asientos:
-                layout_asientos[asiento.fila] = []
-            layout_asientos[asiento.fila].append(asiento)
+        filas = vuelo.avion.filas
+        columnas = vuelo.avion.columnas
+
+        for fila in range(1, filas + 1):
+            layout_asientos[fila] = []
+            for columna in range(1, columnas + 1):
+                asiento_encontrado = next(
+                    (asiento for asiento in asientos_avion.values() if asiento.fila == fila and asiento.columna == columna),
+                    None
+                )
+                layout_asientos[fila].append(asiento_encontrado)
         
         pasajeros = request.user.pasajeros_creados.all()
-        form = ReservaForm()
-        form.fields['pasajero'].queryset = pasajeros
+        pasajero_form = PasajeroForm()
+        cantidad_pasajeros_form = CantidadPasajerosForm()
+
+        total_pasajeros = request.session.get('total_pasajeros', 0)
         
         return render(request, 'cliente/seleccionar_asiento.html', {
             'vuelo': vuelo,
             'layout_asientos': layout_asientos,
+            'asientos_reservados_ids': asientos_reservados_ids,
             'pasajeros': pasajeros,
-            'form': form,
+            'pasajero_form': pasajero_form,
+            'cantidad_pasajeros_form': cantidad_pasajeros_form,
+            'total_pasajeros': total_pasajeros
         })
     def post(self, request, vuelo_id):
         vuelo = get_object_or_404(Vuelo, id=vuelo_id)
-        pasajeros = request.user.pasajeros_creados.all()
+        if 'seleccionar_pasajeros_cantidad' in request.POST:
+            form = CantidadPasajerosForm(request.POST)
+            if form.is_valid():
+                total_pasajeros = form.cleaned_data['adultos'] + form.cleaned_data['menores']
+                if total_pasajeros > 0:
+                    request.session['total_pasajeros'] = total_pasajeros
+                else:
+                    messages.error(request, 'La cantidad total de pasajeros debe ser al menos 1.')
+                return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
+            else:
+                messages.error(request, 'Por favor, introduce una cantidad válida de pasajeros.')
+                return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
+
+        if 'crear_pasajero' in request.POST:
+            pasajero_form = PasajeroForm(request.POST)
+            if pasajero_form.is_valid():
+                nuevo_pasajero = pasajero_form.save(commit=False)
+                nuevo_pasajero.usuario = request.user
+                nuevo_pasajero.save()
+                messages.success(request, f'El pasajero {nuevo_pasajero.nombre} ha sido agregado.')
+            else:
+                messages.error(request, 'Error al crear el pasajero. Por favor, revisa el formulario.')
+            
+            return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
         
-        form = ReservaForm(request.POST)
-        form.fields['pasajero'].queryset = pasajeros
+        total_pasajeros = request.session.get('total_pasajeros', 0)
+        asientos_seleccionados_ids = request.POST.getlist('asientos')
+        pasajeros_seleccionados_ids = request.POST.getlist('pasajeros')
         
-        if form.is_valid():
-            reserva = form.save(commit=False)
-            reserva.usuario_reserva = request.user
-            reserva.vuelo = vuelo
+        if len(asientos_seleccionados_ids) != total_pasajeros or len(pasajeros_seleccionados_ids) != total_pasajeros:
+            messages.error(request, f'Debes seleccionar {total_pasajeros} asientos y asignar un pasajero a cada uno.')
+            return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
+
+        try:
+            with transaction.atomic():
+                for asiento_id, pasajero_id in zip(asientos_seleccionados_ids, pasajeros_seleccionados_ids):
+                    asiento = get_object_or_404(Asiento, id=asiento_id)
+                    pasajero = get_object_or_404(Pasajero, id=pasajero_id, usuario=request.user)
+
+                    if Reserva.objects.filter(vuelo=vuelo, asiento=asiento, estado__in=['confirmada', 'pendiente']).exists():
+                        raise ValueError(f'El asiento {asiento.numero} ya ha sido reservado.')
+
+                    Reserva.objects.create(
+                        vuelo=vuelo,
+                        pasajero=pasajero,
+                        asiento=asiento,
+                        usuario_reserva=request.user,
+                        estado='pendiente',
+                        precio_total=vuelo.precio_base,
+                        codigo_reserva=get_random_string(length=10).upper()
+                    )
             
-            reserva.codigo_reserva = get_random_string(length=10).upper()
-            reserva.estado = 'pendiente'
-            reserva.precio_total = vuelo.precio_base
-            
-            reserva.save()
-            
-            asiento = reserva.asiento
-            asiento.estado = 'reservado'
-            asiento.save()
-            
-            messages.success(request, f'¡Reserva para el asiento {asiento.numero} realizada con éxito! Código: {reserva.codigo_reserva}')
+            del request.session['total_pasajeros']
+            messages.success(request, f'Reservas creadas exitosamente para {total_pasajeros} asientos.')
             return redirect('ver_reservas_cliente')
-        
-        messages.error(request, 'Por favor, revisa los datos del formulario.')
-        
-        asientos = Asiento.objects.filter(avion=vuelo.avion).order_by('fila', 'columna')
-        layout_asientos = {}
-        for asiento in asientos:
-            if asiento.fila not in layout_asientos:
-                layout_asientos[asiento.fila] = []
-            layout_asientos[asiento.fila].append(asiento)
-        
-        return render(request, 'cliente/seleccionar_asiento.html', {
-            'vuelo': vuelo,
-            'layout_asientos': layout_asientos,
-            'pasajeros': pasajeros,
-            'form': form,
-        })
 
+        except ValueError as e:
+            messages.error(request, str(e))
+        except Exception:
+            messages.error(request, 'Ocurrió un error inesperado al procesar las reservas.')
 
+        return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
 @method_decorator(login_required, name='dispatch')
 class VerReservasClienteView(View):
     def get(self, request, filtro=None):
@@ -134,9 +224,7 @@ class VerReservasClienteView(View):
 class CancelarReservaView(View):
     def post(self, request, reserva_id):
         reserva = get_object_or_404(Reserva, id=reserva_id, usuario_reserva=request.user)
-        asiento = reserva.asiento
-        asiento.estado = 'disponible'
-        asiento.save()
+    
         reserva.estado = 'cancelada'
         reserva.save()
 
@@ -196,6 +284,25 @@ class EditarPasajeroView(View):
         })
 
 
+@method_decorator(login_required, name='dispatch')
+class CrearPasajeroView(View):
+    def get(self, request):
+        form = PasajeroForm()
+        return render(request, 'cliente/crear_pasajero.html', {'form': form})
+
+    def post(self, request):
+        form = PasajeroForm(request.POST)
+        if form.is_valid():
+            pasajero = form.save(commit=False)
+            pasajero.usuario = request.user
+            pasajero.save()
+            messages.success(request, "Pasajero creado exitosamente.")
+            return redirect('gestionar_pasajeros')
+        
+        messages.error(request, "Error al crear el pasajero. Por favor, revisa los datos.")
+        return render(request, 'cliente/crear_pasajero.html', {'form': form})
+    
+    
 @method_decorator(login_required, name='dispatch')
 class EliminarPasajeroView(View):
     def post(self, request, pasajero_id):
@@ -387,3 +494,34 @@ class DetallePasajeroEmpleadoView(View):
             'pasajero': pasajero,
             'reservas': reservas
         })
+    
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
+class ReportePasajerosVueloView(View):
+    def get(self, request):
+        form = SeleccionarVueloForm()
+        context = {
+            'form': form,
+            'reporte_data': None,
+        }
+        return render(request, 'empleado/reporte_pasajeros_vuelo.html', context)
+    
+    def post(self, request):
+        form = SeleccionarVueloForm(request.POST)
+        context = {'form': form, 'reporte_data': None}
+
+        if form.is_valid():
+            vuelo_seleccionado = form.cleaned_data['vuelo']
+            reservas = Reserva.objects.filter(
+                vuelo=vuelo_seleccionado,
+                estado='confirmada'
+            ).order_by('asiento__numero')
+            
+            context['reporte_data'] = {
+                'vuelo': vuelo_seleccionado,
+                'pasajeros': [reserva.pasajero for reserva in reservas],
+                'reservas': reservas,
+            }
+        
+        return render(request, 'empleado/reporte_pasajeros_vuelo.html', context)

@@ -4,6 +4,7 @@ from .views import (
     CancelarReservaEmpleadoView,
     ConfirmarReservaView,
     CrearAvionView,
+    CrearPasajeroView,
     CrearVueloView,
     DetallePasajeroEmpleadoView,
     DetallesVueloView,
@@ -21,17 +22,24 @@ from .views import (
     PanelClienteView,
     PanelEmpleadoView,
     SeleccionarAsientoView,
+    SeleccionarPasajerosView,
     VerReservasClienteView,
-    VerVuelosClienteView
+    VerVuelosClienteView,
+    ReportePasajerosVueloView,
+    MiPerfilView
 )
 
 urlpatterns = [
+    #Perfiles de usuario
+    path('mi-perfil/', MiPerfilView.as_view(), name='mi_perfil'),
+
     # Rutas para clientes 
     path('cliente/', PanelClienteView.as_view(), name='panel_cliente'),
     
     # Rutas para Clientes (vuelos)
     path('cliente/vuelos/', VerVuelosClienteView.as_view(), name='ver_vuelos_cliente'),
     path('cliente/vuelo/<int:vuelo_id>/detalles/', DetallesVueloView.as_view(), name='detalles_vuelo'),
+    path('cliente/vuelo/<int:vuelo_id>/pasajeros/', SeleccionarPasajerosView.as_view(), name='seleccionar_pasajeros'),
     path('cliente/vuelo/<int:vuelo_id>/asientos/', SeleccionarAsientoView.as_view(), name='seleccionar_asiento'),
 
     # Rutas para Clientes (reservas)
@@ -42,6 +50,7 @@ urlpatterns = [
     # Rutas para Clientes (pasajeros)
     path('pasajeros/', GestionarPasajerosView.as_view(), name='gestionar_pasajeros'),
     path('pasajeros/editar/<int:pasajero_id>/', EditarPasajeroView.as_view(), name='editar_pasajero'),
+    path('pasajeros/crear/', CrearPasajeroView.as_view(), name='crear_pasajero'),
     path('pasajeros/eliminar/<int:pasajero_id>/', EliminarPasajeroView.as_view(), name='eliminar_pasajero'),
     
     # Rutas para Empleados
@@ -50,8 +59,8 @@ urlpatterns = [
     # Rutas para Empleados(reservas)
     path('empleado/reservas/', GestionarReservasEmpleadoView.as_view(), name='gestionar_reservas_empleado'),
     path('empleado/reservas/<str:filtro>/', GestionarReservasEmpleadoView.as_view(), name='gestionar_reservas_empleado_filtradas'),
-    path('empleado/reservas/confirmar/<int:reserva_id>/', ConfirmarReservaView.as_view(), name='confirmar_reserva'),
-    path('empleado/reservas/cancelar/<int:reserva_id>/', CancelarReservaEmpleadoView.as_view(), name='cancelar_reserva'),
+    path('empleado/reservas/confirmar/<int:reserva_id>/', ConfirmarReservaView.as_view(), name='confirmar_reserva_empleado'),
+    path('empleado/reservas/cancelar/<int:reserva_id>/', CancelarReservaEmpleadoView.as_view(), name='cancelar_reserva_empleado'),
 
     # Rutas para Empleados (vuelos)
     path('empleado/vuelos/', GestionarVuelosView.as_view(), name='gestionar_vuelos_empleado'),
@@ -68,4 +77,7 @@ urlpatterns = [
     #Rutas para Empleados (pasajeros)
     path('empleado/pasajeros/', GestionarPasajerosEmpleadoView.as_view(), name='gestionar_pasajeros_empleado'),
     path('empleado/pasajeros/<int:pasajero_id>/', DetallePasajeroEmpleadoView.as_view(), name='detalle_pasajero_empleado'),
+
+    #Ruta para Empleados (Reportes)
+    path('empleado/reportes/pasajeros/', ReportePasajerosVueloView.as_view(), name='reporte_pasajeros_vuelo'),
 ]

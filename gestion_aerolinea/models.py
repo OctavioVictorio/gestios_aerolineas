@@ -111,7 +111,7 @@ class Asiento(models.Model):
 class Reserva(models.Model):
     vuelo = models.ForeignKey(Vuelo, on_delete=models.CASCADE, related_name='reservas')
     pasajero = models.ForeignKey(Pasajero, on_delete=models.CASCADE, related_name='reservas')
-    asiento = models.OneToOneField(Asiento, on_delete=models.CASCADE, related_name='reserva')
+    asiento = models.ForeignKey(Asiento, on_delete=models.CASCADE, related_name='reservas')
     usuario_reserva = models.ForeignKey(
         Usuario, 
         on_delete=models.CASCADE, 
@@ -125,6 +125,9 @@ class Reserva(models.Model):
     fecha_reserva = models.DateTimeField(auto_now_add=True)
     precio_total = models.DecimalField(max_digits=10, decimal_places=2)
     codigo_reserva = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        unique_together = ('vuelo', 'asiento')
 
     def __str__(self):
         return f"Reserva de {self.pasajero} en {self.vuelo} - Asiento: {self.asiento.numero}"
