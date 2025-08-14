@@ -6,27 +6,27 @@
 <a href="{% url 'panel_cliente' %}" class="btn btn-outline-secondary mb-4">
     <i class="bi bi-arrow-left me-2"></i> Volver
 </a>
+<div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Mis Reservas</h1>
+    <p class="lead text-muted mt-3">Aquí encontrarás todas las reservas que has realizado.</p>
+</div>
+
+<div class="d-flex justify-content-center mb-4">
+    <a href="{% url 'ver_reservas_cliente' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2">
+        Todas
+    </a>
+    <a href="{% url 'ver_reservas_cliente_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2">
+        Pendientes
+    </a>
+    <a href="{% url 'ver_reservas_cliente_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2">
+        Confirmadas
+    </a>
+    <a href="{% url 'ver_reservas_cliente_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2">
+        Canceladas
+    </a>
+</div>
+
 <div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-primary">Mis Reservas</h1>
-        <p class="lead text-muted mt-3">Aquí encontrarás todas las reservas que has realizado.</p>
-    </div>
-
-    <div class="d-flex justify-content-center mb-4">
-        <a href="{% url 'ver_reservas_cliente' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2">
-            Todas
-        </a>
-        <a href="{% url 'ver_reservas_cliente_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2">
-            Pendientes
-        </a>
-        <a href="{% url 'ver_reservas_cliente_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2">
-            Confirmadas
-        </a>
-        <a href="{% url 'ver_reservas_cliente_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2">
-            Canceladas
-        </a>
-    </div>
-
     {% if reservas %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for reserva in reservas %}
@@ -37,20 +37,6 @@
                         <h5 class="card-title fw-bold text-secondary mb-0">
                             <i class="bi bi-airplane-fill me-2"></i> Vuelo: {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}
                         </h5>
-                        
-                        {% if reserva.estado == 'confirmada' %}
-                        <span class="badge bg-success rounded-pill text-uppercase p-2">
-                            {{ reserva.estado }}
-                        </span>
-                        {% elif reserva.estado == 'pendiente' %}
-                        <span class="badge bg-warning text-dark rounded-pill text-uppercase p-2">
-                            {{ reserva.estado }}
-                        </span>
-                        {% else %}
-                        <span class="badge bg-danger rounded-pill text-uppercase p-2">
-                            {{ reserva.estado }}
-                        </span>
-                        {% endif %}
                     </div>
                     
                     <ul class="list-unstyled mb-4">
@@ -59,7 +45,11 @@
                             <span class="fw-bold">{{ reserva.vuelo.fecha_salida|date:"d M Y H:i" }}</span>
                         </li>
                         <li class="d-flex justify-content-between">
-                            <span class="text-muted"><i class="bi bi-person-circle me-2"></i> Asiento:</span>
+                            <span class="text-muted"><i class="bi bi-person-circle me-2"></i> Pasajero:</span>
+                            <span class="fw-bold">{{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between">
+                            <span class="text-muted"><i class="bi bi-geo-alt-fill me-2"></i> Asiento:</span>
                             <span class="fw-bold">{{ reserva.asiento.numero }}</span>
                         </li>
                         <li class="d-flex justify-content-between">
@@ -68,6 +58,25 @@
                         </li>
                     </ul>
 
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        {% if reserva.estado == 'confirmada' %}
+                        <span class="badge bg-success rounded-pill text-uppercase p-2">
+                            {{ reserva.get_estado_display }}
+                        </span>
+                        <a href="{% url 'ver_boleto' reserva.id %}" class="btn btn-sm btn-primary ">
+                            <i class="bi bi-ticket-perforated me-1"></i> Ver Boleto
+                        </a>
+                        {% elif reserva.estado == 'pendiente' %}
+                        <span class="badge bg-warning text-dark rounded-pill text-uppercase p-2">
+                            {{ reserva.get_estado_display }}
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger rounded-pill text-uppercase p-2">
+                            {{ reserva.get_estado_display }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    
                     <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
                         <span class="text-muted fs-6">Precio Total:</span>
                         <span class="fs-5 fw-bold text-primary">${{ reserva.precio_total }}</span>

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Historial de Vuelos{% endblock %}
+
+{% block content %}
+<a href="{% url 'panel_cliente' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver 
+</a>
+<div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-primary">Tu Historial de Vuelos</h1>
+    <p class="lead text-muted mt-3">Aquí encontrarás un resumen de tus viajes pasados.</p>
+</div>
+<div class="container py-5">
+
+    {% if historial_reservas %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for reserva in historial_reservas %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-3 px-4">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-airplane-engines-fill me-2"></i> Vuelo {{ reserva.vuelo.numero_vuelo }}
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="card-text">
+                        <strong class="text-muted">Ruta:</strong> {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}
+                    </p>
+                    <p class="card-text">
+                        <strong class="text-muted">Fecha de Salida:</strong> {{ reserva.vuelo.fecha_salida|date:"d M Y" }}
+                    </p>
+                    <p class="card-text">
+                        <strong class="text-muted">Pasajero:</strong> {{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}
+                    </p>
+                    <p class="card-text">
+                        <strong class="text-muted">Asiento:</strong> {{ reserva.asiento.numero }}
+                    </p>
+                    <p class="card-text">
+                        <strong class="text-muted">Código de Reserva:</strong> {{ reserva.codigo_reserva }}
+                    </p>
+                </div>
+                <div class="card-footer bg-light border-0 text-muted d-flex justify-content-between align-items-center py-3 px-4">
+                    <span>Vuelo completado</span>
+                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+        <div class="alert alert-info p-4" role="alert">
+            <i class="bi bi-info-circle-fill fs-3 me-2"></i>
+            <p class="mb-0 fs-5">Todavía no tienes vuelos completados en tu historial.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

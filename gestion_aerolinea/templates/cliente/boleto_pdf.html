@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Boleto - {{ reserva.codigo_reserva }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        .boleto-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .info-grid {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .info-item {
+            width: 48%;
+            margin-bottom: 10px;
+        }
+        .info-item p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .info-item strong {
+            display: block;
+            font-size: 16px;
+            color: #000;
+        }
+        .barcode {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .barcode h2 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 28px;
+            border: 1px solid #000;
+            padding: 10px;
+            display: inline-block;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="boleto-container">
+        <div class="header">
+            <h1>Boleto Electrónico</h1>
+            <p>{{ reserva.vuelo.origen }} &rarr; {{ reserva.vuelo.destino }}</p>
+        </div>
+        <div class="content">
+            <div class="section">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <p>Pasajero</p>
+                        <strong>{{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <p>Código de Reserva</p>
+                        <strong>{{ reserva.codigo_reserva }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <p>Vuelo</p>
+                        <strong>{{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <p>Asiento</p>
+                        <strong>Fila:{{ reserva.asiento.fila }} - Columna:{{ reserva.asiento.columna }}</strong>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <p>Fecha de Salida</p>
+                        <strong>{{ reserva.vuelo.fecha_salida|date:"d M Y" }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <p>Hora de Salida</p>
+                        <strong>{{ reserva.vuelo.fecha_salida|date:"H:i" }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <p>Emisión del Boleto</p>
+                        <strong>{{ boleto.fecha_emision|date:"d M Y H:i" }}</strong>
+                    </div>
+                    <div class="info-item">
+                        <p>Estado</p>
+                        <strong style="color: #28a745;">{{ boleto.get_estado_display }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+            
+            <div class="barcode ">
+                <p>Presenta este código al abordar</p>
+                <h2>{{ boleto.codigo_barra }}</h2>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<a href="{% url 'panel_empleado' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver 
+</a>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5 fw-bold text-primary">Gestión de Usuarios</h1>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Perfil</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.username }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if usuario.perfil == 'admin' %}bg-warning{% elif usuario.perfil == 'empleado' %}bg-info{% else %}bg-secondary{% endif %}">
+                                    {{ usuario.perfil|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'gestionar_usuarios' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                    {% if usuario.perfil == 'cliente' %}
+                                        <input type="hidden" name="nuevo_perfil" value="empleado">
+                                        <button type="submit" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-person-fill-gear"></i> Pasar a Empleado
+                                        </button>
+                                    {% elif usuario.perfil == 'empleado' %}
+                                        <input type="hidden" name="nuevo_perfil" value="cliente">
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-person-fill-down"></i> Pasar a Cliente
+                                        </button>
+                                    {% else %}
+                                        {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

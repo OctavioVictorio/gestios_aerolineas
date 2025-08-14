@@ -1,6 +1,6 @@
 from django import forms
 from .models import Avion, Pasajero, Reserva, Vuelo, Usuario
-
+from django.utils import timezone
 
 class ReservaForm(forms.ModelForm):
     class Meta:
@@ -8,8 +8,6 @@ class ReservaForm(forms.ModelForm):
         fields = ['pasajero', 'asiento'] 
 
 
-
-    
 class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
@@ -57,6 +55,7 @@ class VueloForm(forms.ModelForm):
             'estado',
             'precio_base',
             'avion',
+            'imagen'
         ]
         widgets = {
             'origen': forms.TextInput(attrs={'class': 'form-control'}),
@@ -67,6 +66,15 @@ class VueloForm(forms.ModelForm):
             'precio_base': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ej. 150.00'}),
             'avion': forms.Select(attrs={'class': 'form-control'}),
         }
+    
+    def clean_fecha_salida(self):
+        fecha_salida = self.cleaned_data.get('fecha_salida')
+        if fecha_salida and fecha_salida < timezone.now():
+            raise forms.ValidationError(
+                "La fecha y hora de salida no pueden ser en el pasado."
+            )
+        return fecha_salida
+
     def clean(self):
         cleaned_data = super().clean()
         fecha_salida = cleaned_data.get("fecha_salida")

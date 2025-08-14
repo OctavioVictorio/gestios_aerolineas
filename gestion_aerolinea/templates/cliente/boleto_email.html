@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Reserva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+            color: #333333;
+        }
+        .footer {
+            background-color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .details-table th, .details-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .details-table th {
+            width: 30%;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>¡Reserva Confirmada!</h1>
+        </div>
+        <div class="content">
+            <p>Hola {{ reserva.pasajero.nombre }}</p>
+            <p>Tu reserva para el vuelo {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }} ha sido confirmada con éxito.</p>
+            <p>Adjuntamos tu boleto electrónico en formato PDF.</p>
+            
+            <table class="details-table">
+                <tr>
+                    <th>Vuelo</th>
+                    <td>{{ reserva.vuelo.numero_vuelo }}</td>
+                </tr>
+                <tr>
+                    <th>Pasajero</th>
+                    <td>{{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}</td>
+                </tr>
+                <tr>
+                    <th>Asiento</th>
+                    <td>{{ reserva.asiento.numero }}</td>
+                </tr>
+                <tr>
+                    <th>Código de Reserva</th>
+                    <td>{{ reserva.codigo_reserva }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de Salida</th>
+                    <td>{{ reserva.vuelo.fecha_salida|date:"d M Y H:i" }}</td>
+                </tr>
+            </table>
+
+            <p>¡Gracias por elegir nuestra aerolínea!</p>
+        </div>
+        <div class="footer">
+            <p>Este es un correo automático, por favor no lo respondas.</p>
+        </div>
+    </div>
+</body>
+</html>

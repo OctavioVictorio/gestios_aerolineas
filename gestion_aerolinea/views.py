@@ -1,14 +1,30 @@
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db import transaction
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import get_template
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.db import transaction
 
-from .forms import AvionForm, CantidadPasajerosForm, PasajeroForm, VueloForm, SeleccionarVueloForm, UsuarioForm
-from .models import Asiento, Avion, Pasajero, Reserva, Vuelo
+from weasyprint import HTML
 
+from .forms import (
+    AvionForm,
+    CantidadPasajerosForm,
+    PasajeroForm,
+    SeleccionarVueloForm,
+    UsuarioForm,
+    VueloForm,
+)
+
+from .models import Asiento, Avion, Boleto, Pasajero, Reserva, Vuelo
+from .utils.email import enviar_boleto_por_email
+
+# from .utils import enviar_boleto_por_email
 
 def es_cliente(user):
     return user.is_authenticated and user.perfil == 'cliente'
@@ -21,6 +37,7 @@ def es_admin(user):
 
 def es_empleado_o_admin(user):
     return user.is_authenticated and (user.perfil == 'empleado' or user.perfil == 'admin')
+
 
 @method_decorator(login_required, name='dispatch')
 class MiPerfilView(View):
@@ -53,14 +70,38 @@ class MiPerfilView(View):
     
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(es_cliente), name='dispatch')
+class BuscarVuelosView(View):
+    def get(self, request):
+        origen = request.GET.get('origen')
+        destino = request.GET.get('destino')
+        
+        vuelos = Vuelo.objects.filter(
+            fecha_salida__gte=timezone.now()
+        )
+
+        if origen:
+            vuelos = vuelos.filter(origen__icontains=origen)
+        
+        if destino:
+            vuelos = vuelos.filter(destino__icontains=destino)
+        
+        return render(request, 'cliente/ver_vuelos.html', {
+            'vuelos': vuelos,
+            'origen_buscado': origen,
+            'destino_buscado': destino,
+        })
+    
+    
+@method_decorator(login_required, name='dispatch')
 class PanelClienteView(View):
     def get(self, request):
-        if not request.user.is_authenticated:
-            return redirect('login')
-        if request.user.perfil != 'cliente':
-            return redirect('index')
-        return render(request, 'cliente/panel_cliente.html')
+        vuelos_sugeridos = Vuelo.objects.filter(
+            fecha_salida__gte=timezone.now()
+        ).order_by('fecha_salida')[:4]  
+        
+        return render(request, 'cliente/panel_cliente.html', {
+            'vuelos_sugeridos': vuelos_sugeridos,
+        })
 
 
 class VerVuelosClienteView(View):
@@ -70,13 +111,30 @@ class VerVuelosClienteView(View):
 
 
 @method_decorator(login_required, name='dispatch')
+class HistorialVuelosClienteView(View):
+    def get(self, request):
+        historial_reservas = Reserva.objects.filter(
+            usuario_reserva=request.user,
+            estado='confirmada',
+            vuelo__fecha_salida__lt=timezone.now()
+        ).order_by('-vuelo__fecha_salida')
+        
+        return render(request, 'cliente/historial_vuelos.html', {
+            'historial_reservas': historial_reservas
+        })
+
+
+@method_decorator(login_required, name='dispatch')
 class DetallesVueloView(View):
     def get(self, request, vuelo_id):
         vuelo = get_object_or_404(Vuelo, id=vuelo_id)
-        cantidad_pasajeros_form = CantidadPasajerosForm() # ✅ Instancia del formulario
+        cantidad_pasajeros_form = CantidadPasajerosForm()
+        if 'total_pasajeros' in request.session:
+            del request.session['total_pasajeros']
+            
         return render(request, 'cliente/detalles_vuelo.html', {
             'vuelo': vuelo,
-            'cantidad_pasajeros_form': cantidad_pasajeros_form, # ✅ Pasamos el formulario al contexto
+            'cantidad_pasajeros_form': cantidad_pasajeros_form,
         })
 
 
@@ -91,13 +149,13 @@ class SeleccionarPasajerosView(View):
         form = CantidadPasajerosForm(request.POST)
         if form.is_valid():
             total_pasajeros = form.cleaned_data['adultos'] + form.cleaned_data['menores']
-            # ✅ Guardamos la cantidad total en la sesión
             request.session['total_pasajeros'] = total_pasajeros
             return redirect('seleccionar_asiento', vuelo_id=vuelo_id)
         else:
             vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+            messages.error(request, 'Por favor, introduce una cantidad válida de pasajeros.')
             return render(request, 'cliente/seleccionar_pasajeros.html', {'vuelo': vuelo, 'form': form})
-        
+
 
 @method_decorator(login_required, name='dispatch')
 class SeleccionarAsientoView(View):
@@ -131,7 +189,7 @@ class SeleccionarAsientoView(View):
         return render(request, 'cliente/seleccionar_asiento.html', {
             'vuelo': vuelo,
             'layout_asientos': layout_asientos,
-            'asientos_reservados_ids': asientos_reservados_ids,
+            'asientos_reservados_ids': list(asientos_reservados_ids),
             'pasajeros': pasajeros,
             'pasajero_form': pasajero_form,
             'cantidad_pasajeros_form': cantidad_pasajeros_form,
@@ -139,6 +197,7 @@ class SeleccionarAsientoView(View):
         })
     def post(self, request, vuelo_id):
         vuelo = get_object_or_404(Vuelo, id=vuelo_id)
+        
         if 'seleccionar_pasajeros_cantidad' in request.POST:
             form = CantidadPasajerosForm(request.POST)
             if form.is_valid():
@@ -147,11 +206,10 @@ class SeleccionarAsientoView(View):
                     request.session['total_pasajeros'] = total_pasajeros
                 else:
                     messages.error(request, 'La cantidad total de pasajeros debe ser al menos 1.')
-                return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
             else:
                 messages.error(request, 'Por favor, introduce una cantidad válida de pasajeros.')
-                return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
-
+            return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
+        
         if 'crear_pasajero' in request.POST:
             pasajero_form = PasajeroForm(request.POST)
             if pasajero_form.is_valid():
@@ -201,6 +259,8 @@ class SeleccionarAsientoView(View):
             messages.error(request, 'Ocurrió un error inesperado al procesar las reservas.')
 
         return redirect('seleccionar_asiento', vuelo_id=vuelo.id)
+
+
 @method_decorator(login_required, name='dispatch')
 class VerReservasClienteView(View):
     def get(self, request, filtro=None):
@@ -301,8 +361,8 @@ class CrearPasajeroView(View):
         
         messages.error(request, "Error al crear el pasajero. Por favor, revisa los datos.")
         return render(request, 'cliente/crear_pasajero.html', {'form': form})
-    
-    
+
+
 @method_decorator(login_required, name='dispatch')
 class EliminarPasajeroView(View):
     def post(self, request, pasajero_id):
@@ -313,11 +373,11 @@ class EliminarPasajeroView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(user_passes_test(es_empleado), name='dispatch')
+@method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
 class PanelEmpleadoView(View):
     def get(self, request):
         return render(request, 'empleado/panel_empleado.html')
-    
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
@@ -339,16 +399,56 @@ class GestionarReservasEmpleadoView(View):
 class ConfirmarReservaView(View):
     def post(self, request, reserva_id):
         reserva = get_object_or_404(Reserva, id=reserva_id)
-        if reserva.estado == 'pendiente':
-            reserva.estado = 'confirmada'
-            reserva.save()
-            messages.success(request, f"La reserva {reserva.codigo_reserva} ha sido confirmada con éxito.")
-        else:
-            messages.warning(request, f"La reserva {reserva.codigo_reserva} ya no está en estado pendiente.")
         
-        # Redirigimos al usuario a la página de reservas del empleado, manteniendo el filtro activo
+        try:
+            with transaction.atomic():
+                if reserva.estado == 'pendiente':
+                    reserva.estado = 'confirmada'
+                    reserva.save()
+
+                    codigo_boleto = get_random_string(length=12).upper()
+                    boleto = Boleto.objects.create(
+                        reserva=reserva,
+                        codigo_barra=codigo_boleto
+                    )
+                    
+                    exito, mensaje = enviar_boleto_por_email(boleto.id, request)
+                    
+                    if exito:
+                        messages.success(request, f"Reserva {reserva.codigo_reserva} confirmada y boleto enviado por correo.")
+                    else:
+                        raise Exception(f"Fallo al enviar el email: {mensaje}")
+                else:
+                    messages.warning(request, f"La reserva {reserva.codigo_reserva} ya no está en estado pendiente.")
+
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error al confirmar la reserva: {e}")
+        
         return redirect('gestionar_reservas_empleado')
-    
+
+
+@method_decorator(login_required, name='dispatch')
+class VerBoletoView(View):
+    def get(self, request, reserva_id):
+        reserva = get_object_or_404(Reserva, id=reserva_id, usuario_reserva=request.user)
+        
+        if not hasattr(reserva, 'boleto'):
+            messages.error(request, 'No se ha emitido un boleto para esta reserva.')
+            return redirect('ver_reservas_cliente')
+
+        context = {'boleto': reserva.boleto, 'reserva': reserva}
+        
+        if 'descargar' in request.GET:
+            html_string = get_template('cliente/boleto_pdf.html').render(context)
+            html = HTML(string=html_string, base_url=request.build_absolute_uri())
+            pdf = html.write_pdf()
+
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="Boleto-{reserva.boleto.codigo_barra}.pdf"'
+            return response
+        
+        return render(request, 'cliente/boleto.html', context)
+
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(es_empleado_o_admin), name='dispatch')
@@ -525,3 +625,37 @@ class ReportePasajerosVueloView(View):
             }
         
         return render(request, 'empleado/reporte_pasajeros_vuelo.html', context)
+    
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(es_admin), name='dispatch')
+class GestionarUsuariosView(View):
+    def get(self, request):
+        User = get_user_model()
+        usuarios = User.objects.all().order_by('perfil', 'username')
+        return render(request, 'empleado/gestionar_usuarios.html', {'usuarios': usuarios})
+
+    def post(self, request):
+        User = get_user_model()
+        user_id = request.POST.get('user_id')
+        nuevo_perfil = request.POST.get('nuevo_perfil')
+        
+        if not user_id or not nuevo_perfil:
+            messages.error(request, 'Datos insuficientes para actualizar el perfil.')
+            return redirect('gestionar_usuarios')
+
+        try:
+            with transaction.atomic():
+                usuario_a_modificar = User.objects.get(id=user_id)
+                if usuario_a_modificar.perfil != nuevo_perfil:
+                    usuario_a_modificar.perfil = nuevo_perfil
+                    usuario_a_modificar.save()
+                    messages.success(request, f'Perfil de "{usuario_a_modificar.username}" actualizado a {nuevo_perfil}.')
+                else:
+                    messages.info(request, f'El usuario ya tiene el perfil {nuevo_perfil}.')
+        except User.DoesNotExist:
+            messages.error(request, 'Usuario no encontrado.')
+        except Exception as e:
+            messages.error(request, f'Ocurrió un error: {str(e)}')
+            
+        return redirect('gestionar_usuarios')

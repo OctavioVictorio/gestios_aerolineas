@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-primary">Panel de Empleado</h1>
+        <h1 class="display-4 fw-bold text-primary">Panel de Gestión</h1>
         <p class="lead text-muted mt-3">Bienvenido, {{ request.user.username }}. Desde aquí puedes gestionar los vuelos, reservas y otros aspectos de la aerolínea.</p>
     </div>
 
@@ -60,6 +60,29 @@
                 </div>
             </div>
         </div>
+
+        {% if request.user.perfil == 'admin' %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-secondary">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-person-gear fs-1 text-secondary mb-3"></i>
+                    <h5 class="card-title fw-bold">Gestión de Usuarios</h5>
+                    <p class="card-text text-muted">Cambia el rol de usuarios a empleado (Solo para admins).</p>
+                    <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary mt-auto">Ir a Usuarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <i class="bi bi-box-fill fs-1 text-warning mb-3"></i>
+                    <h5 class="card-title fw-bold">Panel de Administración</h5>
+                    <p class="card-text text-muted">Accede al panel de gestión de Django (solo para administradores).</p>
+                    <a href="{% url 'admin:index' %}" class="btn btn-warning mt-auto">Ir al Admin</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Boleto - {{ reserva.codigo_reserva }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'ver_reservas_cliente' %}" class="btn btn-outline-secondary mb-4">
+    <i class="bi bi-arrow-left me-2"></i> Volver a reservas
+</a>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-4">
+                    <h2 class="h4 mb-0 fw-bold">
+                        <i class="bi bi-airplane-engines-fill me-2"></i> Boleto Electrónico
+                    </h2>
+                    <p class="mb-0">{{ reserva.vuelo.origen }} <i class="bi bi-arrow-right-short"></i> {{ reserva.vuelo.destino }}</p>
+                </div>
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <p class="text-muted mb-0">Pasajero:</p>
+                            <h3 class="h5 fw-bold">{{ reserva.pasajero.nombre }} {{ reserva.pasajero.apellido }}</h3>
+                        </div>
+                        <img src="{% static 'img/logo_aerolinea.png' %}" alt="Logo de la aerolínea" style="height: 50px;">
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="border p-3 rounded-3 h-100">
+                                <p class="text-muted small mb-1">Código de Reserva</p>
+                                <h4 class="h5 fw-bold text-primary">{{ reserva.codigo_reserva }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border p-3 rounded-3 h-100">
+                                <p class="text-muted small mb-1">Estado</p>
+                                <span class="badge bg-success p-2 fs-6">Confirmado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-sm-6 col-lg-3">
+                            <p class="text-muted small mb-1">Vuelo</p>
+                            <h5 class="fw-bold">{{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}</h5>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <p class="text-muted small mb-1">Asiento</p>
+                            <h5 class="fw-bold">Fila:{{ reserva.asiento.fila }} - Columna:{{ reserva.asiento.columna }}</h5>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <p class="text-muted small mb-1">Salida</p>
+                            <h5 class="fw-bold">{{ reserva.vuelo.fecha_salida|date:"d M Y" }}</h5>
+                            <p class="mb-0">{{ reserva.vuelo.fecha_salida|date:"H:i" }}</p>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <p class="text-muted small mb-1">Emisión</p>
+                            <h5 class="fw-bold">{{ boleto.fecha_emision|date:"d M Y" }}</h5>
+                            <p class="mb-0">{{ boleto.fecha_emision|date:"H:i" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <p class="text-muted small mb-2">Presenta este código al abordar</p>
+                        <div class="border border-dark py-4 px-5 d-inline-block">
+                            <h4 class="fw-bold fs-2 text-dark">{{ boleto.codigo_barra }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center py-3 bg-light rounded-bottom-4">
+                    <p class="text-muted small mb-0">¡Buen viaje!</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'ver_reservas_cliente' %}" class="btn btn-secondary me-2">
+                    <i class="bi bi-list-ul me-2"></i> Ver Mis Reservas
+                </a>
+                <a href="{% url 'ver_boleto' reserva.id %}?descargar" class="btn btn-primary">
+                    <i class="bi bi-download me-2"></i> Descargar PDF
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

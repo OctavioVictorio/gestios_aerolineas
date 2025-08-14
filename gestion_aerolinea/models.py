@@ -29,6 +29,7 @@ class Avion(models.Model):
         return f"{self.modelo} ({self.capacidad} asientos)"
 
 class Vuelo(models.Model):
+    imagen = models.ImageField(upload_to='vuelos_imagenes/', null=True, blank=True)
     origen = models.CharField(max_length=100)
     destino = models.CharField(max_length=100)
     fecha_salida = models.DateTimeField()

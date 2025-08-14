@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    BuscarVuelosView,
     CancelarReservaView,
     CancelarReservaEmpleadoView,
     ConfirmarReservaView,
@@ -16,13 +17,16 @@ from .views import (
     EliminarVueloView,
     GestionarAvionesView,    
     GestionarPasajerosView,
+    GestionarUsuariosView,
     GestionarPasajerosEmpleadoView,
     GestionarReservasEmpleadoView,
     GestionarVuelosView,
+    HistorialVuelosClienteView,
     PanelClienteView,
     PanelEmpleadoView,
     SeleccionarAsientoView,
     SeleccionarPasajerosView,
+    VerBoletoView,
     VerReservasClienteView,
     VerVuelosClienteView,
     ReportePasajerosVueloView,
@@ -41,6 +45,9 @@ urlpatterns = [
     path('cliente/vuelo/<int:vuelo_id>/detalles/', DetallesVueloView.as_view(), name='detalles_vuelo'),
     path('cliente/vuelo/<int:vuelo_id>/pasajeros/', SeleccionarPasajerosView.as_view(), name='seleccionar_pasajeros'),
     path('cliente/vuelo/<int:vuelo_id>/asientos/', SeleccionarAsientoView.as_view(), name='seleccionar_asiento'),
+    path('buscar/', BuscarVuelosView.as_view(), name='buscar_vuelos'),
+    
+    path('historial/', HistorialVuelosClienteView.as_view(), name='historial_vuelos_cliente'),
 
     # Rutas para Clientes (reservas)
     path('cliente/reservas/', VerReservasClienteView.as_view(), name='ver_reservas_cliente'),
@@ -62,6 +69,9 @@ urlpatterns = [
     path('empleado/reservas/confirmar/<int:reserva_id>/', ConfirmarReservaView.as_view(), name='confirmar_reserva_empleado'),
     path('empleado/reservas/cancelar/<int:reserva_id>/', CancelarReservaEmpleadoView.as_view(), name='cancelar_reserva_empleado'),
 
+    #Ruta para Boleto
+    path('reservas/boleto/<int:reserva_id>/', VerBoletoView.as_view(), name='ver_boleto'),
+
     # Rutas para Empleados (vuelos)
     path('empleado/vuelos/', GestionarVuelosView.as_view(), name='gestionar_vuelos_empleado'),
     path('empleado/vuelos/crear/', CrearVueloView.as_view(), name='crear_vuelo_empleado'),
@@ -80,4 +90,7 @@ urlpatterns = [
 
     #Ruta para Empleados (Reportes)
     path('empleado/reportes/pasajeros/', ReportePasajerosVueloView.as_view(), name='reporte_pasajeros_vuelo'),
+
+    # Rutas para Admin (Usuarios)
+    path('empleado/usuarios/', GestionarUsuariosView.as_view(), name='gestionar_usuarios'),
 ]

@@ -1,47 +1,161 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Aerolineas{% endblock %}
+{% block title %}Mi Panel - Aerolíneas{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-primary">Bienvenido, <span class="text-dark">{{ request.user.username }}</span></h1>
-        <h2 class="fs-4 fw-light text-muted">Viaja Donde Desees</h2>
-    </div>
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("{% static 'img/mendoza.png' %}") no-repeat center center;
+        background-size: cover;
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
 
-    <div class="row justify-content-center g-4">
-        <div class="col-md-4">
-            <a href="{% url 'ver_vuelos_cliente' %}" class="text-decoration-none">
-                <div class="card text-center border-0 shadow-sm hover-shadow rounded-4 p-4 bg-primary text-white transition">
-                    <i class="bi bi-airplane-fill display-4 mb-3"></i>
-                    <h5 class="fw-bold">Ver Vuelos Disponibles</h5>
+    .search-bar {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-link {
+        transition: all 0.3s ease;
+    }
+    .card-link:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .card-icon {
+        font-size: 3rem;
+    }
+    .flight-card {
+        transition: all 0.3s ease;
+        min-width: 300px;
+        flex: 0 0 auto;
+    }
+    .flight-card img {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .horizontal-scroll-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .horizontal-scroll-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    .horizontal-scroll-container::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+</style>
+
+<div class="hero-section">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Bienvenido, {{ request.user.username }}</h1>
+        <p class="lead">Busca tu próximo vuelo y haz tu reserva.</p>
+        
+        <div class="search-bar mt-5">
+            <form action="{% url 'buscar_vuelos' %}" method="get" class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <label for="origen" class="visually-hidden">Origen</label>
+                    <input type="text" class="form-control" id="origen" name="origen" placeholder="Origen">
+                </div>
+                <div class="col-md-5">
+                    <label for="destino" class="visually-hidden">Destino</label>
+                    <input type="text" class="form-control" id="destino" name="destino" placeholder="Destino">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-2"></i>Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <h3 class="fw-bold mb-4">Vuelos Recomendados</h3>
+    <div class="horizontal-scroll-container">
+        <div class="d-flex flex-row gap-4 py-2">
+            {% if vuelos_sugeridos %}
+                {% for vuelo in vuelos_sugeridos %}
+                    <a href="{% url 'detalles_vuelo' vuelo.id %}" class="text-decoration-none flight-card card rounded-4 shadow-sm h-100">
+                        <img src="{% if vuelo.imagen %}{{ vuelo.imagen.url }}{% else %}{% static 'img/mendoza.png' %}{% endif %}" class="card-img-top" alt="Vuelo a {{ vuelo.destino }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-dark">{{ vuelo.origen }} → {{ vuelo.destino }}</h5>
+                            <p class="card-text text-muted small flex-grow-1">
+                                Salida: {{ vuelo.fecha_salida|date:"d M Y H:i" }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <h4 class="fw-bold text-primary mb-0">${{ vuelo.precio_base }}</h4>
+                                <span class="badge bg-light text-dark">{{ vuelo.avion.nombre }}</span>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-muted">No hay vuelos disponibles o sugeridos en este momento.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <h3 class="text-center fw-bold mb-4">Acceso Rápido</h3>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'ver_reservas_cliente' %}" class="card-link text-decoration-none">
+                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-journal-bookmark-fill card-icon text-success mb-3"></i>
+                        <h5 class="fw-bold text-dark">Mis Reservas</h5>
+                        <p class="text-muted mb-0">Revisa tus próximas reservas.</p>
+                    </div>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
-            <a href="{% url 'ver_reservas_cliente' %}" class="text-decoration-none">
-                <div class="card text-center border-0 shadow-sm hover-shadow rounded-4 p-4 bg-success text-white transition">
-                    <i class="bi bi-journal-bookmark-fill display-4 mb-3"></i>
-                    <h5 class="fw-bold">Ver Mis Reservas</h5>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'historial_vuelos_cliente' %}" class="card-link text-decoration-none">
+                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-check-fill card-icon text-secondary mb-3"></i>
+                        <h5 class="fw-bold text-dark">Historial de Vuelos</h5>
+                        <p class="text-muted mb-0">Mira tus vuelos anteriores.</p>
+                    </div>
                 </div>
             </a>
         </div>
-        <div class="col-md-4">
-            <a href="{% url 'gestionar_pasajeros' %}" class="text-decoration-none">
-                <div class="card text-center border-0 shadow-sm hover-shadow rounded-4 p-4 bg-info text-white transition">
-                    <i class="bi bi-person-plus-fill display-4 mb-3"></i>
-                    <h5 class="fw-bold">Gestionar Pasajero</h5>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'gestionar_pasajeros' %}" class="card-link text-decoration-none">
+                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-person-plus-fill card-icon text-info mb-3"></i>
+                        <h5 class="fw-bold text-dark">Gestionar Pasajeros</h5>
+                        <p class="text-muted mb-0">Agrega o edita tus pasajeros.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'ver_vuelos_cliente' %}" class="card-link text-decoration-none">
+                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-search card-icon text-primary mb-3"></i>
+                        <h5 class="fw-bold text-dark">Buscar Vuelos</h5>
+                        <p class="text-muted mb-0">Encuentra tu próximo destino.</p>
+                    </div>
                 </div>
             </a>
         </div>
     </div>
 </div>
-
-<style>
-    .hover-shadow:hover {
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2) !important;
-        transform: translateY(-5px);
-        transition: all 0.3s ease-in-out;
-    }
-</style>
 {% endblock %}

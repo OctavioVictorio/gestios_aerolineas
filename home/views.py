@@ -13,7 +13,7 @@ class HomeView(View):
             elif request.user.perfil == 'empleado':
                 return redirect('panel_empleado')
             elif request.user.perfil == 'admin':
-                return redirect('panel_admin')
+                return redirect('panel_empleado')
         return render(request, 'index.html')
 
 

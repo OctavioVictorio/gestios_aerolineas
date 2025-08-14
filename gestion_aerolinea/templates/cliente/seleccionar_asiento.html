@@ -7,11 +7,11 @@
 <a href="{% url 'detalles_vuelo' vuelo_id=vuelo.id %}" class="btn btn-outline-secondary">
     <i class="bi bi-arrow-left me-2"></i> Volver a Detalles
 </a>
+<div class="text-center mb-5">
+    <h1 class="display-6 fw-bold text-primary">Seleccionar Asientos</h1>
+    <p class="lead text-muted mt-2">Vuelo de <span class="fw-bold">{{ vuelo.origen }}</span> a <span class="fw-bold">{{ vuelo.destino }}</span></p>
+</div>
 <div class="container py-5" data-total-pasajeros="{{ total_pasajeros|default:0 }}">
-    <div class="text-center mb-5">
-        <h1 class="display-6 fw-bold text-primary">Seleccionar Asientos</h1>
-        <p class="lead text-muted mt-2">Vuelo de <span class="fw-bold">{{ vuelo.origen }}</span> a <span class="fw-bold">{{ vuelo.destino }}</span></p>
-    </div>
 
     <div class="card shadow-lg p-5 mx-auto" style="max-width: 800px;">
         <h5 class="text-center text-muted mb-4">Mapa de Asientos del Avión</h5>

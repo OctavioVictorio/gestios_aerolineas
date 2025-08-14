@@ -71,7 +71,7 @@
             <i class="bi bi-airplane-fill me-2"></i> Aerolínea
         </a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            {% if user.is_authenticated and user.perfil == 'empleado' %}
+            {% if user.is_authenticated and user.perfil == 'empleado' or user.is_authenticated and user.perfil == 'admin' %}
             
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -103,10 +103,25 @@
                             <i class="bi bi-file-bar-graph-fill me-2"></i> Reportes
                         </a>
                     </li>
+                    {% if user.perfil == 'admin' %}
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'gestionar_usuarios' %}">
+                            <i class="bi bi-person-gear-fill me-2"></i> Usuarios
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{% url 'admin:index' %}">
+                            <i class="bi bi-person-gear-fill me-2"></i> Admin
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </li>
 
-            {% else %}
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'ver_vuelos_cliente' %}">
                         <i class="bi bi-airplane-engines"></i> Vuelos
@@ -121,6 +136,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'ver_reservas_cliente' %}">
                         <i class="bi bi-ticket-perforated"></i> Mis Reservas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'historial_vuelos_cliente' %}">
+                        <i class="bi-clock-history"></i> Historial
                     </a>
                 </li>
                 {% endif %}
@@ -156,16 +176,18 @@
     </div>
 </nav>
 
-<main class="container mt-4">
+<div class="container my-3">
     {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         {% endfor %}
     {% endif %}
+</div>
 
+<main class="container">
     {% block content %}
     {% endblock %}
 </main>
