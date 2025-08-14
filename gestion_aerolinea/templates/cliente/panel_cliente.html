@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Mi Panel - Aerolíneas{% endblock %}
+{% block title %}{% trans "Mi Panel" %} - {% trans "Aerolíneas" %}{% endblock %}
 
 {% block content %}
 <style>
@@ -59,22 +60,22 @@
 
 <div class="hero-section">
     <div class="container">
-        <h1 class="display-4 fw-bold">Bienvenido, {{ request.user.username }}</h1>
-        <p class="lead">Busca tu próximo vuelo y haz tu reserva.</p>
+        <h1 class="display-4 fw-bold">{% trans "Bienvenido," %} {{ request.user.username }}</h1>
+        <p class="lead">{% trans "Busca tu próximo vuelo y haz tu reserva." %}</p>
         
         <div class="search-bar mt-5">
             <form action="{% url 'buscar_vuelos' %}" method="get" class="row g-3 align-items-center">
                 <div class="col-md-5">
-                    <label for="origen" class="visually-hidden">Origen</label>
-                    <input type="text" class="form-control" id="origen" name="origen" placeholder="Origen">
+                    <label for="origen" class="visually-hidden">{% trans "Origen" %}</label>
+                    <input type="text" class="form-control" id="origen" name="origen" placeholder="{% trans 'Origen' %}">
                 </div>
                 <div class="col-md-5">
-                    <label for="destino" class="visually-hidden">Destino</label>
-                    <input type="text" class="form-control" id="destino" name="destino" placeholder="Destino">
+                    <label for="destino" class="visually-hidden">{% trans "Destino" %}</label>
+                    <input type="text" class="form-control" id="destino" name="destino" placeholder="{% trans 'Destino' %}">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-search me-2"></i>Buscar
+                        <i class="bi bi-search me-2"></i>{% trans "Buscar" %}
                     </button>
                 </div>
             </form>
@@ -83,7 +84,7 @@
 </div>
 
 <div class="container mt-5 mb-5">
-    <h3 class="fw-bold mb-4">Vuelos Recomendados</h3>
+    <h3 class="fw-bold mb-4">{% trans "Vuelos Recomendados" %}</h3>
     <div class="horizontal-scroll-container">
         <div class="d-flex flex-row gap-4 py-2">
             {% if vuelos_sugeridos %}
@@ -93,7 +94,7 @@
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title fw-bold text-dark">{{ vuelo.origen }} → {{ vuelo.destino }}</h5>
                             <p class="card-text text-muted small flex-grow-1">
-                                Salida: {{ vuelo.fecha_salida|date:"d M Y H:i" }}
+                                {% trans "Salida:" %} {{ vuelo.fecha_salida|date:"d M Y H:i" }}
                             </p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
                                 <h4 class="fw-bold text-primary mb-0">${{ vuelo.precio_base }}</h4>
@@ -103,22 +104,22 @@
                     </a>
                 {% endfor %}
             {% else %}
-                <p class="text-center text-muted">No hay vuelos disponibles o sugeridos en este momento.</p>
+                <p class="text-center text-muted">{% trans "No hay vuelos disponibles o sugeridos en este momento." %}</p>
             {% endif %}
         </div>
     </div>
 </div>
 
 <div class="container mb-5">
-    <h3 class="text-center fw-bold mb-4">Acceso Rápido</h3>
+    <h3 class="text-center fw-bold mb-4">{% trans "Acceso Rápido" %}</h3>
     <div class="row g-4 justify-content-center">
         <div class="col-md-6 col-lg-3">
             <a href="{% url 'ver_reservas_cliente' %}" class="card-link text-decoration-none">
                 <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
                     <div class="card-body">
                         <i class="bi bi-journal-bookmark-fill card-icon text-success mb-3"></i>
-                        <h5 class="fw-bold text-dark">Mis Reservas</h5>
-                        <p class="text-muted mb-0">Revisa tus próximas reservas.</p>
+                        <h5 class="fw-bold text-dark">{% trans "Mis Reservas" %}</h5>
+                        <p class="text-muted mb-0">{% trans "Revisa tus próximas reservas." %}</p>
                     </div>
                 </div>
             </a>
@@ -128,8 +129,8 @@
                 <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
                     <div class="card-body">
                         <i class="bi bi-calendar-check-fill card-icon text-secondary mb-3"></i>
-                        <h5 class="fw-bold text-dark">Historial de Vuelos</h5>
-                        <p class="text-muted mb-0">Mira tus vuelos anteriores.</p>
+                        <h5 class="fw-bold text-dark">{% trans "Historial de Vuelos" %}</h5>
+                        <p class="text-muted mb-0">{% trans "Mira tus vuelos anteriores." %}</p>
                     </div>
                 </div>
             </a>
@@ -139,8 +140,8 @@
                 <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
                     <div class="card-body">
                         <i class="bi bi-person-plus-fill card-icon text-info mb-3"></i>
-                        <h5 class="fw-bold text-dark">Gestionar Pasajeros</h5>
-                        <p class="text-muted mb-0">Agrega o edita tus pasajeros.</p>
+                        <h5 class="fw-bold text-dark">{% trans "Gestionar Pasajeros" %}</h5>
+                        <p class="text-muted mb-0">{% trans "Agrega o edita tus pasajeros." %}</p>
                     </div>
                 </div>
             </a>
@@ -150,8 +151,8 @@
                 <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
                     <div class="card-body">
                         <i class="bi bi-search card-icon text-primary mb-3"></i>
-                        <h5 class="fw-bold text-dark">Buscar Vuelos</h5>
-                        <p class="text-muted mb-0">Encuentra tu próximo destino.</p>
+                        <h5 class="fw-bold text-dark">{% trans "Buscar Vuelos" %}</h5>
+                        <p class="text-muted mb-0">{% trans "Encuentra tu próximo destino." %}</p>
                     </div>
                 </div>
             </a>

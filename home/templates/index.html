@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Inicio - Aerolínea{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "Inicio" %} - {% trans "Aerolínea" %}{% endblock %}
 
 {% block content %}
 <header class="bg-white text-dark text-center py-5 rounded-3 shadow-sm mb-5">
     <div class="container d-flex flex-column align-items-center">
-        <h1 class="display-5 text-uppercase mb-3 fw-bold">Sistema de Gestión de Aerolínea</h1>
+        <h1 class="display-5 text-uppercase mb-3 fw-bold">{% trans "Sistema de Gestión de Aerolínea" %}</h1>
         
         <div class="d-flex align-items-center mb-4" style="font-size: 1.5rem;">
             <div class="border-top border-secondary flex-grow-1 mx-3" style="height: 1px;"></div>
@@ -13,23 +15,23 @@
             <div class="border-top border-secondary flex-grow-1 mx-3" style="height: 1px;"></div>
         </div>
         
-        <p class="lead font-weight-light mb-0">Inicia sesión o regístrate para comenzar a gestionar tus vuelos.</p>
+        <p class="lead font-weight-light mb-0">{% trans "Inicia sesión o regístrate para comenzar a gestionar tus vuelos." %}</p>
     </div>
 </header>
 
 <section class="page-section">
     <div class="container">
         <div class="text-center">
-            <h2 class="text-secondary mb-4 fw-bold">Accede a la plataforma</h2>
+            <h2 class="text-secondary mb-4 fw-bold">{% trans "Accede a la plataforma" %}</h2>
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-4 text-center">
                     <a href="{% url 'login' %}" class="btn btn-primary btn-lg w-100 mb-3">
-                        <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar sesión
+                        <i class="bi bi-box-arrow-in-right me-2"></i> {% trans "Iniciar sesión" %}
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-4 text-center">
                     <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-lg w-100">
-                        <i class="bi bi-person-plus-fill me-2"></i> Registrarse
+                        <i class="bi bi-person-plus-fill me-2"></i> {% trans "Registrarse" %}
                     </a>
                 </div>
             </div>

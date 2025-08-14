@@ -1,0 +1,209 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-14 22:18+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:5
+msgid "Mi Panel"
+msgstr "My Dashboard"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:5
+msgid "Aerolíneas"
+msgstr "Airlines"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:63
+msgid "Bienvenido,"
+msgstr "Welcome,"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:64
+msgid "Busca tu próximo vuelo y haz tu reserva."
+msgstr "Find your next flight and book your reservation."
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:69
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:70
+msgid "Origen"
+msgstr "Origin"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:73
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:74
+msgid "Destino"
+msgstr "Destination"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:78
+msgid "Buscar"
+msgstr "Search"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:87
+msgid "Vuelos Recomendados"
+msgstr "Recommended Flights"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:97
+msgid "Salida:"
+msgstr "Departure:"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:107
+msgid "No hay vuelos disponibles o sugeridos en este momento."
+msgstr "There are no flights available or suggested at the moment."
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:114
+msgid "Acceso Rápido"
+msgstr "Quick Access"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:121
+#: home/templates/base.html:139
+msgid "Mis Reservas"
+msgstr "My Reservations"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:122
+msgid "Revisa tus próximas reservas."
+msgstr "Review your upcoming reservations."
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:132
+msgid "Historial de Vuelos"
+msgstr "Flight History"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:133
+msgid "Mira tus vuelos anteriores."
+msgstr "View your previous flights."
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:143
+msgid "Gestionar Pasajeros"
+msgstr "Manage Passengers"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:144
+msgid "Agrega o edita tus pasajeros."
+msgstr "Add or edit your passengers."
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:154
+msgid "Buscar Vuelos"
+msgstr "Search Flights"
+
+#: gestion_aerolinea/templates/cliente/panel_cliente.html:155
+msgid "Encuentra tu próximo destino."
+msgstr "Find your next destination."
+
+#: home/templates/accounts/login.html:4 home/templates/accounts/login.html:10
+#: home/templates/base.html:199 home/templates/index.html:29
+msgid "Iniciar sesión"
+msgstr "Log In"
+
+#: home/templates/accounts/login.html:11
+msgid "Introduce tus credenciales para acceder"
+msgstr "Enter your credentials to access"
+
+#: home/templates/accounts/login.html:38
+msgid "Ingresar"
+msgstr "Sign In"
+
+#: home/templates/accounts/login.html:43
+msgid "¿No tienes una cuenta?"
+msgstr "Don't have an account?"
+
+#: home/templates/accounts/login.html:44
+msgid "Regístrate aquí"
+msgstr "Register here"
+
+#: home/templates/accounts/register.html:5
+msgid "Registro"
+msgstr "Register"
+
+#: home/templates/accounts/register.html:39 home/templates/base.html:202
+#: home/templates/index.html:34
+msgid "Registrarse"
+msgstr "Sign Up"
+
+#: home/templates/accounts/register.html:45
+msgid "¿Ya tienes una cuenta?"
+msgstr "Already have an account?"
+
+#: home/templates/accounts/register.html:46
+msgid "Inicia sesión"
+msgstr "Log in"
+
+#: home/templates/base.html:6
+msgid "Gestión de Aerolínea"
+msgstr "Airline Management"
+
+#: home/templates/base.html:72 home/templates/base.html:228
+#: home/templates/index.html:5
+msgid "Aerolínea"
+msgstr "Airline"
+
+#: home/templates/base.html:79
+msgid "Gestión"
+msgstr "Management"
+
+#: home/templates/base.html:84
+msgid "Reservas"
+msgstr "Reservations"
+
+#: home/templates/base.html:89 home/templates/base.html:128
+msgid "Vuelos"
+msgstr "Flights"
+
+#: home/templates/base.html:94
+msgid "Aviones"
+msgstr "Airplanes"
+
+#: home/templates/base.html:99 home/templates/base.html:133
+msgid "Pasajeros"
+msgstr "Passengers"
+
+#: home/templates/base.html:104
+msgid "Reportes"
+msgstr "Reports"
+
+#: home/templates/base.html:113
+msgid "Usuarios"
+msgstr "Users"
+
+#: home/templates/base.html:118
+msgid "Admin"
+msgstr "Admin"
+
+#: home/templates/base.html:144
+msgid "Historial"
+msgstr "History"
+
+#: home/templates/base.html:189
+msgid "Hola,"
+msgstr "Hello,"
+
+#: home/templates/base.html:194
+msgid "Cerrar sesión"
+msgstr "Log out"
+
+#: home/templates/base.html:228
+msgid "Todos los derechos reservados"
+msgstr "All rights reserved"
+
+#: home/templates/index.html:5
+msgid "Inicio"
+msgstr "Home"
+
+#: home/templates/index.html:10
+msgid "Sistema de Gestión de Aerolínea"
+msgstr "Airline Management System"
+
+#: home/templates/index.html:18
+msgid "Inicia sesión o regístrate para comenzar a gestionar tus vuelos."
+msgstr "Log in or sign up to start managing your flights."
+
+#: home/templates/index.html:25
+msgid "Accede a la plataforma"
+msgstr "Access the platform"
