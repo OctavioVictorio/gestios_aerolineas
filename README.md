@@ -1,26 +1,80 @@
-# Sistema de Gestión de Aerolínea
+<p align="center">
+  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=82E1F7&width=435&lines=%3E+'Hello+World'" alt="Typing SVG" /></a>
+</p>
+
+<p align="center">
+  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F724DD&width=435&lines=Sistema+de+Gestion+de+Aerolínea" alt="Typing SVG" /></a>
+</p>
+
+<br>
 
 ## ✈️ Descripción del Proyecto
 
 Este es un sistema completo de gestión de aerolínea desarrollado con Django. Permite a los usuarios (clientes, empleados y administradores) interactuar con la plataforma para gestionar vuelos, reservas, pasajeros y otros aspectos operativos. El proyecto está diseñado con una arquitectura modular y cuenta con soporte para múltiples idiomas (internacionalización).
 
-## ✨ Características Principales
+---
+
+## ✨ Características Principales (Parte 1 y 2)
 
 * **Autenticación de Usuarios:** Sistema de inicio de sesión y registro de usuarios con perfiles diferenciados (cliente, empleado, admin).
-* **Gestión de Vuelos:** Creación, edición y eliminación de vuelos por parte de empleados y administradores.
+* **Gestión de Vuelos:** Creación, edición y eliminación de vuelos por parte de administradores.
 * **Gestión de Reservas:** Los clientes pueden buscar, reservar y gestionar sus propios vuelos.
 * **Gestión de Pasajeros:** Los usuarios pueden agregar y editar la información de sus pasajeros.
 * **Reportes:** Módulo de reportes para administradores y empleados.
 * **Interfaz de Usuario (UI):** Diseño moderno y responsivo gracias a Bootstrap 5.3.3 y Font Awesome.
-* **Internacionalización (i18n):** Soporte para español (es) e inglés (en), permitiendo cambiar el idioma de la interfaz fácilmente.
+* **Internacionalización (i18n):** Soporte para español (es) e inglés (en).
+* **API RESTful:** Implementación completa de una API REST para todas las funcionalidades principales, utilizando Django Rest Framework (DRF) y Token Authentication.
+
+---
+
+## 🔗 API RESTful (Parte 2)
+
+El sistema expone todas las funcionalidades principales a través de una API RESTful documentada, con estricto control de acceso basado en roles.
+
+### 🔐 Autenticación
+
+El acceso a los *endpoints* protegidos se realiza mediante **Token Authentication**.
+
+1.  **Obtener el Token:** Se debe enviar una petición `POST` con `username` y `password` al *endpoint*:
+    ```
+    POST /api/token-auth/
+    ```
+2.  **Uso del Token:** El token retornado debe incluirse en el *header* de todas las peticiones protegidas:
+    ```
+    Authorization: Token <key_del_token>
+    ```
+
+### 📋 Documentación Interactiva (Swagger UI)
+
+Todos los *endpoints*, esquemas y requisitos de seguridad están documentados automáticamente con `drf-spectacular`.
+
+| URL | Descripción |
+| :--- | :--- |
+| **Documentación:** | `http://127.0.0.1:8000/api/schema/swagger-ui/` |
+| **Definición YAML/JSON:** | `http://127.0.0.1:8000/api/schema/` |
+
+### **Ejemplo de Rutas y Permisos:**
+
+| Módulo | Endpoint de Ejemplo | Permiso Requerido |
+| :--- | :--- | :--- |
+| **Vuelos** | `GET /api/v1/vuelos/` | Todos (ReadOnly) |
+| **Admin** | `POST /api/v1/aviones/` | Administrador |
+| **Reservas** | `POST /api/v1/reservas/` | Cliente/Admin (Autenticado) |
+| **Reportes** | `GET /api/v1/reportes/vuelos/1/pasajeros/` | Administrador |
+
+---
 
 ## 🚀 Tecnologías Utilizadas
 
 * **Backend:** Python 3.10+ y Django 5.2.4
+* **API Framework:** **Django Rest Framework (DRF)**
+* **Documentación:** **DRF Spectacular (Swagger)**
 * **Frontend:** HTML5, CSS3, JavaScript
 * **Framework CSS:** Bootstrap 5.3.3
 * **Base de Datos:** SQLite (por defecto, para desarrollo)
 * **Versión de Django:** 5.2.4
+
+---
 
 ## 🛠️ Instalación y Configuración
 
@@ -39,7 +93,7 @@ Sigue estos pasos para tener una copia local del proyecto en funcionamiento.
     cd gestios_aerolineas
     ```
     ```bash
-    git clone [https://github.com/OctavioVictorio/gestios_aerolineas.git]
+    git clone [[https://github.com/OctavioVictorio/gestios_aerolineas.git](https://github.com/OctavioVictorio/gestios_aerolineas.git)]
     cd gestios_aerolineas
     ```
 
@@ -77,6 +131,8 @@ Sigue estos pasos para tener una copia local del proyecto en funcionamiento.
     ```
     El proyecto estará disponible en `http://127.0.0.1:8000/`.
 
+---
+
 ## 🌐 Internacionalización (i18n)
 
 El proyecto solo tiene el panel del cliente y el navbar con traduccion.
@@ -87,6 +143,7 @@ El proyecto solo tiene el panel del cliente y el navbar con traduccion.
 * **Traducciones:** Los archivos de traducción se encuentran en la carpeta `locale/`.
 * **Cambiar de idioma:** La barra de navegación incluye un selector de idioma que permite a los usuarios cambiar entre "Español" y "English".
 
+---
 
 ## Alumno
 
