@@ -3,8 +3,11 @@ Brotli==1.1.0
 cffi==1.17.1
 cssselect2==0.8.0
 Django==5.2.4
+django-filter==25.1
+djangorestframework==3.16.1
 ecdsa==0.19.1
 fonttools==4.59.0
+Markdown==3.9
 MarkupSafe==3.0.2
 pillow==11.3.0
 pycparser==2.22
