@@ -1,9 +1,13 @@
 <p align="center">
-  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=82E1F7&width=435&lines=%3E+'Hello+World'" alt="Typing SVG" /></a>
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=9EFE64&width=450&lines=%3E+API+REST+is+online%21+%F0%9F%9A%80" alt="API REST is online! 🚀" />
+  </a>
 </p>
 
 <p align="center">
-  <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F724DD&width=435&lines=Sistema+de+Gestion+de+Aerolínea" alt="Typing SVG" /></a>
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=F724DD&width=450&lines=Sistema+de+Gestion+de+Aerolínea" alt="Sistema de Gestion de Aerolínea" />
+  </a>
 </p>
 
 <br>
