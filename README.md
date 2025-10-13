@@ -1,8 +1,15 @@
 <p align="center">
   <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=9EFE64&width=450&lines=%3E+API+REST+is+online%21+%F0%9F%9A%80" alt="API REST - Sistema de Gestion de Aerolínea 🚀" />
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=9EFE64&width=450&lines=%3E+API+REST+is+online!+%F0%9F%9A%80" alt="API REST is online! 🚀" />
   </a>
 </p>
+
+<p align="center">
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F724DD&width=450&lines=Sistema+de+Gestion+de+Aerolínea" alt="Sistema de Gestion de Aerolínea" />
+  </a>
+</p>
+
 <br>
 
 ## ✈️ Descripción del Proyecto
