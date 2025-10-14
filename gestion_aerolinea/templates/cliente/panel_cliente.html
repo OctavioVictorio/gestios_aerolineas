@@ -20,28 +20,76 @@
         border-radius: 10px;
         padding: 20px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .search-bar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
     
     .card-link {
         transition: all 0.3s ease;
+        display: block;
     }
     .card-link:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+    .card-link .card {
+        transition: all 0.3s ease;
+    }
+    .card-link:hover .card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
     .card-icon {
         font-size: 3rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+        animation: iconPulse 2s infinite;
+    }
+    .card-link:hover .card-icon {
+        transform: scale(1.1) rotate(5deg);
+        color: #007bff;
     }
     .flight-card {
         transition: all 0.3s ease;
         min-width: 300px;
         flex: 0 0 auto;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .flight-card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
     .flight-card img {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
         height: 150px;
         object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .flight-card:hover img {
+        transform: scale(1.05);
+    }
+    .card-body {
+        transition: padding 0.3s ease;
+    }
+    .flight-card:hover .card-body {
+        padding: 1.5rem;
+    }
+    .card-title {
+        transition: color 0.3s ease;
+    }
+    .flight-card:hover .card-title {
+        color: #007bff;
+    }
+    .badge {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .flight-card:hover .badge {
+        transform: scale(1.05);
+        background-color: #ffc107 !important;
+        color: #343a40;
     }
 
     .horizontal-scroll-container {
@@ -55,6 +103,57 @@
     .horizontal-scroll-container::-webkit-scrollbar-thumb {
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
+    }
+    @keyframes iconPulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    .btn-primary {
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+    .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
+    }
+    .btn-primary:active {
+        animation: planeFly 0.6s ease-out;
+    }
+    .btn-primary i {
+        transition: transform 0.3s ease;
+    }
+    .btn-primary:active i {
+        animation: iconFly 0.6s ease-out;
+    }
+    @keyframes planeFly {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1) translateX(10px) translateY(-5px);
+        }
+        100% {
+            transform: scale(1) translateX(0) translateY(0);
+        }
+    }
+    @keyframes iconFly {
+        0% {
+            transform: rotate(0deg) translateX(0);
+        }
+        50% {
+            transform: rotate(15deg) translateX(20px) translateY(-10px);
+        }
+        100% {
+            transform: rotate(0deg) translateX(0) translateY(0);
+        }
     }
 </style>
 

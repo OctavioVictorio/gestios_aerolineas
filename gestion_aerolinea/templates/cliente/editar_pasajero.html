@@ -11,7 +11,16 @@
         <h2 class="fw-bold text-primary">Editar Pasajero</h2>
         <p class="text-muted">Modifica los datos de {{ pasajero.nombre }} {{ pasajero.apellido }}.</p>
     </div>
-    
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateField = document.getElementById('id_fecha_nacimiento');  // Cambia 'id_fecha_nacimiento' al ID real del campo
+        if (dateField && dateField.value) {
+            // Asegura que la fecha esté en formato YYYY-MM-DD
+            const date = new Date(dateField.value);
+            dateField.value = date.toISOString().split('T')[0];
+        }
+    });
+</script>
 <div class="container py-5">
         <form method="post" novalidate>
             {% csrf_token %}
