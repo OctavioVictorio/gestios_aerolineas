@@ -12,24 +12,63 @@
         <p class="lead text-muted mt-3">Revisa y gestiona el estado de todas las reservas de clientes.</p>
     </div>
 
-    <div class="d-flex justify-content-center mb-4">
-        <a href="{% url 'gestionar_reservas_empleado' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2">
+    <div class="d-flex justify-content-center mb-4 flex-wrap">
+        <a href="{% url 'gestionar_reservas_empleado' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2 my-1">
             Todas
         </a>
-        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2">
+        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2 my-1">
             Pendientes
         </a>
-        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2">
+        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2 my-1">
             Confirmadas
         </a>
-        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2">
+        <a href="{% url 'gestionar_reservas_empleado_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2 my-1">
             Canceladas
         </a>
     </div>
 
+<style>
+/* Tabla con sombra y bordes redondeados */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,0.03);
+    transform: translateY(-1px);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Badges con gradiente */
+.badge-confirmada {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    color: white;
+}
+.badge-pendiente {
+    background: linear-gradient(90deg, #ffc107, #ffca2c);
+    color: #212529;
+}
+.badge-cancelada {
+    background: linear-gradient(90deg, #dc3545, #e55353);
+    color: white;
+}
+
+/* Botones de acción */
+.btn-sm {
+    border-radius: 50px;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-sm:hover:not(.disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+</style>
+
     {% if reservas %}
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle mb-0">
             <thead class="table-primary">
                 <tr>
                     <th scope="col">Código</th>
@@ -54,15 +93,15 @@
                     <td>{{ reserva.fecha_reserva|date:"d M Y H:i" }}</td>
                     <td>
                         {% if reserva.estado == 'confirmada' %}
-                        <span class="badge bg-success rounded-pill text-uppercase p-2">
+                        <span class="badge badge-confirmada rounded-pill text-uppercase p-2">
                             {{ reserva.estado }}
                         </span>
                         {% elif reserva.estado == 'pendiente' %}
-                        <span class="badge bg-warning text-dark rounded-pill text-uppercase p-2">
+                        <span class="badge badge-pendiente rounded-pill text-uppercase p-2">
                             {{ reserva.estado }}
                         </span>
                         {% else %}
-                        <span class="badge bg-danger rounded-pill text-uppercase p-2">
+                        <span class="badge badge-cancelada rounded-pill text-uppercase p-2">
                             {{ reserva.estado }}
                         </span>
                         {% endif %}
@@ -109,15 +148,16 @@
     {% endif %}
 </div>
 
+<!-- Modales confirmación / cancelación -->
 <div class="modal fade" id="confirmarModal" tabindex="-1" aria-labelledby="confirmarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content shadow-sm rounded-4">
+            <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="confirmarModalLabel">Confirmar Reserva</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas **confirmar** esta reserva?
+                ¿Estás seguro de que deseas <strong>confirmar</strong> esta reserva?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -132,13 +172,13 @@
 
 <div class="modal fade" id="cancelarModal" tabindex="-1" aria-labelledby="cancelarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content shadow-sm rounded-4">
+            <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="cancelarModalLabel">Cancelar Reserva</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas **cancelar** esta reserva? Esta acción no se puede deshacer.
+                ¿Estás seguro de que deseas <strong>cancelar</strong> esta reserva? Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
