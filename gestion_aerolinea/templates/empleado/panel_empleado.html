@@ -1,85 +1,171 @@
 {% extends 'base.html' %}
-
 {% block title %}Panel de Empleado{% endblock %}
 
 {% block content %}
+<style>
+/*=========================================*/
+/* CABECERA PANEL */
+.header-panel {
+    text-align: center;
+    margin-bottom: 50px;
+}
+.header-panel h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #0d6efd;
+    position: relative;
+    display: inline-block;
+}
+.header-panel h1::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #0d6efd;
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+.header-panel p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 15px;
+}
+
+/*=========================================*/
+/* TARJETAS */
+.card-panel {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* ICONOS */
+.card-panel i {
+    font-size: 3rem;
+    transition: transform 0.3s, color 0.3s;
+}
+.card-panel:hover i {
+    transform: scale(1.2);
+}
+
+/* TITULO Y TEXTO */
+.card-panel .card-title {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.card-panel .card-text {
+    color: #6c757d;
+}
+
+/* BOTONES */
+.card-panel .btn {
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+.card-panel .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* COLORES ESPECIALES ADMIN */
+.card-admin-secondary {
+    border: 2px solid #6c757d;
+}
+.card-admin-warning {
+    border: 2px solid #ffc107;
+}
+
+/* RESPONSIVE */
+@media (max-width: 575px) {
+    .header-panel h1 {
+        font-size: 2rem;
+    }
+    .header-panel p {
+        font-size: 1rem;
+    }
+}
+</style>
+
 <div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-primary">Panel de Gestión</h1>
-        <p class="lead text-muted mt-3">Bienvenido, {{ request.user.username }}. Desde aquí puedes gestionar los vuelos, reservas y otros aspectos de la aerolínea.</p>
+    <div class="header-panel">
+        <h1>Panel de Gestión</h1>
+        <p>Bienvenido, {{ request.user.username }}. Desde aquí puedes gestionar los vuelos, reservas y otros aspectos de la aerolínea.</p>
     </div>
 
     <div class="row justify-content-center g-4">
+        <!-- Reservas -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-bookmark-fill fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Reservas</h5>
-                    <p class="card-text text-muted">Revisa y confirma las reservas de los clientes.</p>
-                    <a href="{% url 'gestionar_reservas_empleado' %}" class="btn btn-primary mt-auto">Ir a Reservas</a>
-                </div>
+            <div class="card card-panel h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-bookmark-fill text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Reservas</h5>
+                <p class="card-text">Revisa y confirma las reservas de los clientes.</p>
+                <a href="{% url 'gestionar_reservas_empleado' %}" class="btn btn-primary mt-auto">Ir a Reservas</a>
             </div>
         </div>
+
+        <!-- Vuelos -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-airplane-fill fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Vuelos</h5>
-                    <p class="card-text text-muted">Crea, edita y administra todos los vuelos.</p>
-                    <a href="{% url 'gestionar_vuelos_empleado' %}" class="btn btn-primary mt-auto">Ir a Vuelos</a>
-                </div>
+            <div class="card card-panel h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-airplane-fill text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Vuelos</h5>
+                <p class="card-text">Crea, edita y administra todos los vuelos.</p>
+                <a href="{% url 'gestionar_vuelos_empleado' %}" class="btn btn-primary mt-auto">Ir a Vuelos</a>
             </div>
         </div>
+
+        <!-- Pasajeros -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Pasajeros</h5>
-                    <p class="card-text text-muted">Revisa la información y el historial de vuelos de los pasajeros.</p>
-                    <a href="{% url 'gestionar_pasajeros_empleado' %}" class="btn btn-primary mt-auto">Ir a Pasajeros</a>
-                </div>
+            <div class="card card-panel h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-people-fill text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Pasajeros</h5>
+                <p class="card-text">Revisa la información y el historial de vuelos de los pasajeros.</p>
+                <a href="{% url 'gestionar_pasajeros_empleado' %}" class="btn btn-primary mt-auto">Ir a Pasajeros</a>
             </div>
         </div>
+
+        <!-- Aviones -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-gear-fill fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Aviones</h5>
-                    <p class="card-text text-muted">Gestiona los aviones disponibles (crear, editar o eliminar).</p>
-                    <a href="{% url 'gestionar_aviones_empleado' %}" class="btn btn-primary mt-auto">Ir a Aviones</a>
-                </div>
+            <div class="card card-panel h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-gear-fill text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Aviones</h5>
+                <p class="card-text">Gestiona los aviones disponibles (crear, editar o eliminar).</p>
+                <a href="{% url 'gestionar_aviones_empleado' %}" class="btn btn-primary mt-auto">Ir a Aviones</a>
             </div>
         </div>
+
+        <!-- Reportes -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-file-bar-graph-fill fs-1 text-primary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Reportes</h5>
-                    <p class="card-text text-muted">Genera reportes de pasajeros por vuelo.</p>
-                    <a href="{% url 'reporte_pasajeros_vuelo' %}" class="btn btn-primary mt-auto">Ir a Reportes</a>
-                </div>
+            <div class="card card-panel h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-file-bar-graph-fill text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Reportes</h5>
+                <p class="card-text">Genera reportes de pasajeros por vuelo.</p>
+                <a href="{% url 'reporte_pasajeros_vuelo' %}" class="btn btn-primary mt-auto">Ir a Reportes</a>
             </div>
         </div>
 
         {% if request.user.perfil == 'admin' %}
+        <!-- Gestión de Usuarios -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-secondary">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-person-gear fs-1 text-secondary mb-3"></i>
-                    <h5 class="card-title fw-bold">Gestión de Usuarios</h5>
-                    <p class="card-text text-muted">Cambia el rol de usuarios a empleado (Solo para admins).</p>
-                    <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary mt-auto">Ir a Usuarios</a>
-                </div>
+            <div class="card card-panel card-admin-secondary h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-person-gear text-secondary mb-3"></i>
+                <h5 class="card-title">Gestión de Usuarios</h5>
+                <p class="card-text">Cambia el rol de usuarios a empleado (Solo para admins).</p>
+                <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary mt-auto">Ir a Usuarios</a>
             </div>
         </div>
+
+        <!-- Panel de Administración -->
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-warning">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <i class="bi bi-box-fill fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title fw-bold">Panel de Administración</h5>
-                    <p class="card-text text-muted">Accede al panel de gestión de Django (solo para administradores).</p>
-                    <a href="{% url 'admin:index' %}" class="btn btn-warning mt-auto">Ir al Admin</a>
-                </div>
+            <div class="card card-panel card-admin-warning h-100 text-center d-flex flex-column justify-content-center">
+                <i class="bi bi-box-fill text-warning mb-3"></i>
+                <h5 class="card-title">Panel de Administración</h5>
+                <p class="card-text">Accede al panel de gestión de Django (solo para administradores).</p>
+                <a href="{% url 'admin:index' %}" class="btn btn-warning mt-auto">Ir al Admin</a>
             </div>
         </div>
         {% endif %}

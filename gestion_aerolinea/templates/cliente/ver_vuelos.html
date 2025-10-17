@@ -1,27 +1,133 @@
 {% extends 'base.html' %}
-
 {% block title %}Vuelos Disponibles{% endblock %}
 
 {% block content %}
-<a href="{% url 'panel_cliente' %}" class="btn btn-outline-secondary mb-4">
+<style>
+/*=========================================*/
+/* BOTÓN VOLVER */
+.btn-back {
+    transition: all 0.3s ease;
+}
+.btn-back:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/*=========================================*/
+/* CABECERA */
+.header-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+.header-section h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #0d6efd;
+    position: relative;
+    display: inline-block;
+}
+.header-section h1::after {
+    content: "";
+    display: block;
+    width: 50%;
+    height: 4px;
+    background-color: #0d6efd;
+    margin: 8px auto 0;
+    border-radius: 2px;
+}
+.header-section p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 15px;
+}
+
+/*=========================================*/
+/* TARJETAS DE VUELO */
+.card-flight {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card-flight:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* CABECERA DE LA TARJETA */
+.card-flight .card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 1rem;
+}
+
+/* LISTA DE DETALLES */
+.card-flight ul li span {
+    display: inline-block;
+    transition: color 0.3s;
+}
+.card-flight ul li span.fw-bold {
+    color: #0d6efd;
+}
+.card-flight ul li .badge {
+    transition: transform 0.3s;
+}
+.card-flight ul li .badge:hover {
+    transform: scale(1.1);
+}
+
+/* PRECIO Y BOTÓN */
+.card-flight .mt-auto {
+    border-top: 1px solid #dee2e6;
+    padding-top: 0.75rem;
+}
+.card-flight .btn {
+    transition: all 0.3s ease;
+}
+.card-flight .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ALERT INFO */
+.alert-info {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border-radius: 12px;
+}
+
+/*=========================================*/
+/* RESPONSIVE */
+@media (max-width: 575px) {
+    .header-section h1 {
+        font-size: 2rem;
+    }
+    .header-section p {
+        font-size: 1rem;
+    }
+}
+</style>
+
+<a href="{% url 'panel_cliente' %}" class="btn btn-outline-secondary mb-4 btn-back">
     <i class="bi bi-arrow-left me-2"></i> Volver
 </a>
-<div class="text-center mb-5">
-    <h1 class="display-5 fw-bold text-primary">Vuelos Disponibles</h1>
-    <p class="lead text-muted mt-3">Explora nuestros próximos vuelos y haz tu reserva.</p>
-</div>
-<div class="container py-5">
 
+<div class="header-section">
+    <h1>Vuelos Disponibles</h1>
+    <p>Explora nuestros próximos vuelos y haz tu reserva.</p>
+</div>
+
+<div class="container py-5">
     {% if vuelos %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for vuelo in vuelos %}
         <div class="col">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card card-flight h-100">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold text-secondary mb-3">
+                    <h5 class="card-title">
                         <i class="bi bi-airplane-fill me-2"></i> {{ vuelo.origen }} → {{ vuelo.destino }}
                     </h5>
-                    
+
                     <ul class="list-unstyled mb-4">
                         <li class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Fecha Salida:</span>
