@@ -12,7 +12,7 @@
     .hero-section {
         position: relative;
         width: 100%;
-        height: calc(100vh - 70px); /* Ocupa toda la pantalla menos navbar (ajustar 70px según tu navbar) */
+        height: calc(100vh - 70px); /* Ocupa toda la pantalla menos navbar */
         min-height: 500px;
         background: url("{% static 'img/mendoza.png' %}") center top / cover no-repeat fixed;
         display: flex;
@@ -22,7 +22,7 @@
         text-align: center;
     }
 
-    /* Capa de overlay para oscurecer ligeramente la imagen y mejorar legibilidad */
+    /* Capa de overlay para mejorar legibilidad */
     .hero-overlay {
         position: absolute;
         top: 0; left: 0;
@@ -55,10 +55,15 @@
     /* FORMULARIO DE BÚSQUEDA */
     /*======================================================================*/
     .search-bar {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        background-color: rgba(255,255,255,0.95);
+        border-radius: 15px;
+        padding: 20px 25px;
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
 
     .search-bar .form-control {
@@ -70,26 +75,48 @@
         height: 50px;
         font-weight: 600;
         transition: all 0.3s ease;
-        display: block;
+        min-width: 300px;
+        flex: 0 0 auto;
+        border-radius: 15px;
+        overflow: hidden;
     }
-    .card-link:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+
+    .search-bar .btn:hover {
+        background-color: #0d6efd;
+        color: #fff;
+        transform: translateY(-2px);
     }
-    .card-icon {
-        font-size: 3rem;
+
+    /*======================================================================*/
+    /* VUELOS RECOMENDADOS */
+    /*======================================================================*/
+    .flights-section {
+        padding: 60px 15px 40px;
+        background-color: #f8f9fa;
+    }
+
+    .flights-section h3 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-weight: 700;
     }
 
     .flight-card {
-        transition: all 0.3s ease;
-        min-width: 300px;
-        flex: 0 0 auto;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .flight-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     }
 
     .flight-card img {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        height: 150px;
+        width: 100%;
+        height: 180px;
         object-fit: cover;
         transition: transform 0.3s ease;
     }
@@ -175,17 +202,10 @@
         .search-bar { flex-direction: column; gap: 10px; }
         .flight-card img { height: 130px; }
     }
-    @keyframes iconPulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
+
+    /*======================================================================*/
+    /* ANIMACIONES */
+    /*======================================================================*/
     .btn-primary {
         transition: all 0.3s ease;
         overflow: hidden;
@@ -236,8 +256,8 @@
         <p>{% trans "Busca tu próximo vuelo y haz tu reserva." %}</p>
 
         <form action="{% url 'buscar_vuelos' %}" method="get" class="search-bar">
-            <input type="text" class="form-control" name="origen" placeholder="{% trans 'Origen' %}">
-            <input type="text" class="form-control" name="destino" placeholder="{% trans 'Destino' %}">
+            <input type="text" class="form-control" name="origen" placeholder="{% trans 'Origen' %}" required>
+            <input type="text" class="form-control" name="destino" placeholder="{% trans 'Destino' %}" required>
             <button type="submit" class="btn btn-primary w-100 fw-bold">
                 <i class="bi bi-search me-2"></i>{% trans "Buscar" %}
             </button>
