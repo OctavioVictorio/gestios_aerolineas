@@ -3,6 +3,77 @@
 {% block title %}Mi Perfil{% endblock %}
 
 {% block content %}
+<style>
+/*=========================================*/
+/* CARD Y CONTENEDOR */
+.card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+.card:hover {
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+/* FORMULARIO */
+.form-label {
+    font-weight: 600;
+}
+input, select, textarea {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+input:focus, select:focus, textarea:focus {
+    box-shadow: 0 0 8px rgba(13,110,253,0.3);
+    border-color: #0d6efd;
+}
+
+/* BOTÓN */
+.btn-primary {
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+/* TABLA */
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+.table-hover tbody tr {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(13,110,253,0.05);
+    transform: translateY(-1px);
+}
+.table-hover thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: #0d6efd;
+    color: white;
+}
+.table-hover td, .table-hover th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 575px) {
+    .card {
+        padding: 20px;
+    }
+    .form-label {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
 <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-primary">Mi Perfil</h1>
@@ -10,8 +81,9 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm p-4 mb-4">
+        <!-- Información de la cuenta -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm p-4">
                 <div class="card-body">
                     <h2 class="h5 fw-bold mb-3">Información de la Cuenta</h2>
                     <form method="post" novalidate>
@@ -34,12 +106,15 @@
                     </form>
                 </div>
             </div>
-            
-            {% if pasajeros %}
+        </div>
+
+        <!-- Pasajeros registrados -->
+        {% if pasajeros %}
+        <div class="col-md-8">
             <div class="card shadow-sm p-4">
                 <div class="card-body">
                     <h2 class="h5 fw-bold mb-3">Mis Pasajeros Registrados</h2>
-                    <div class="table-responsive">
+                    <div class="table-container">
                         <table class="table table-hover align-middle">
                             <thead>
                                 <tr>
@@ -63,9 +138,8 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
-
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

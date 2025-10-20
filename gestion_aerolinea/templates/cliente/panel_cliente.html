@@ -6,64 +6,89 @@
 
 {% block content %}
 <style>
+    /*======================================================================*/
+    /* HERO SECTION (BANNER PRINCIPAL) */
+    /*======================================================================*/
     .hero-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("{% static 'img/mendoza.png' %}") no-repeat center center;
-        background-size: cover;
-        color: white;
-        padding: 80px 0;
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 70px); /* Ocupa toda la pantalla menos navbar (ajustar 70px según tu navbar) */
+        min-height: 500px;
+        background: url("{% static 'img/mendoza.png' %}") center top / cover no-repeat fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
         text-align: center;
-        margin-bottom: 3rem;
     }
 
+    /* Capa de overlay para oscurecer ligeramente la imagen y mejorar legibilidad */
+    .hero-overlay {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 50px 20px;
+        max-width: 900px;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
+    }
+
+    .hero-content p {
+        font-size: 1.25rem;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 8px rgba(0,0,0,0.5);
+    }
+
+    /*======================================================================*/
+    /* FORMULARIO DE BÚSQUEDA */
+    /*======================================================================*/
     .search-bar {
         background-color: rgba(255, 255, 255, 0.9);
         border-radius: 10px;
         padding: 20px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .search-bar:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+    .search-bar .form-control {
+        flex: 1 1 200px;
+        height: 50px;
     }
-    
-    .card-link {
+
+    .search-bar .btn {
+        height: 50px;
+        font-weight: 600;
         transition: all 0.3s ease;
         display: block;
     }
     .card-link:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-    }
-    .card-link .card {
-        transition: all 0.3s ease;
-    }
-    .card-link:hover .card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     }
     .card-icon {
         font-size: 3rem;
-        transition: transform 0.3s ease, color 0.3s ease;
-        animation: iconPulse 2s infinite;
     }
-    .card-link:hover .card-icon {
-        transform: scale(1.1) rotate(5deg);
-        color: #007bff;
-    }
+
     .flight-card {
         transition: all 0.3s ease;
         min-width: 300px;
         flex: 0 0 auto;
-        border-radius: 15px;
-        overflow: hidden;
     }
-    .flight-card:hover {
-        transform: translateY(-8px) scale(1.03);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
+
     .flight-card img {
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
         height: 150px;
         object-fit: cover;
         transition: transform 0.3s ease;
@@ -92,17 +117,63 @@
         color: #343a40;
     }
 
-    .horizontal-scroll-container {
-        overflow-x: auto;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
+    .flight-card .card-body h5 {
+        font-weight: 600;
+        margin-bottom: 10px;
     }
-    .horizontal-scroll-container::-webkit-scrollbar {
-        height: 8px;
+
+    /*======================================================================*/
+    /* ACCESO RÁPIDO */
+    /*======================================================================*/
+    .quick-access {
+        padding: 60px 15px;
     }
-    .horizontal-scroll-container::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
+
+    .quick-access h3 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-weight: 700;
+    }
+
+    .quick-access .card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        padding: 30px 15px;
+        text-align: center;
+    }
+
+    .quick-access .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 35px rgba(0,0,0,0.2);
+    }
+
+    .quick-access .card-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: var(--bs-primary);
+        transition: transform 0.3s;
+    }
+
+    .quick-access .card:hover .card-icon {
+        transform: scale(1.2);
+    }
+
+    /*======================================================================*/
+    /* RESPONSIVIDAD */
+    /*======================================================================*/
+    @media (max-width: 991.98px) {
+        .hero-content h1 { font-size: 2.4rem; }
+        .hero-content p { font-size: 1.1rem; }
+        .flight-card img { height: 150px; }
+    }
+
+    @media (max-width: 575.98px) {
+        .hero-content h1 { font-size: 1.8rem; }
+        .hero-content p { font-size: 1rem; }
+        .search-bar { flex-direction: column; gap: 10px; }
+        .flight-card img { height: 130px; }
     }
     @keyframes iconPulse {
         0% {
@@ -157,102 +228,88 @@
     }
 </style>
 
+<!-- HERO SECTION -->
 <div class="hero-section">
-    <div class="container">
-        <h1 class="display-4 fw-bold">{% trans "Bienvenido," %} {{ request.user.username }}</h1>
-        <p class="lead">{% trans "Busca tu próximo vuelo y haz tu reserva." %}</p>
-        
-        <div class="search-bar mt-5">
-            <form action="{% url 'buscar_vuelos' %}" method="get" class="row g-3 align-items-center">
-                <div class="col-md-5">
-                    <label for="origen" class="visually-hidden">{% trans "Origen" %}</label>
-                    <input type="text" class="form-control" id="origen" name="origen" placeholder="{% trans 'Origen' %}">
-                </div>
-                <div class="col-md-5">
-                    <label for="destino" class="visually-hidden">{% trans "Destino" %}</label>
-                    <input type="text" class="form-control" id="destino" name="destino" placeholder="{% trans 'Destino' %}">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-search me-2"></i>{% trans "Buscar" %}
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+        <h1>{% trans "Bienvenido," %} {{ request.user.username }}</h1>
+        <p>{% trans "Busca tu próximo vuelo y haz tu reserva." %}</p>
+
+        <form action="{% url 'buscar_vuelos' %}" method="get" class="search-bar">
+            <input type="text" class="form-control" name="origen" placeholder="{% trans 'Origen' %}">
+            <input type="text" class="form-control" name="destino" placeholder="{% trans 'Destino' %}">
+            <button type="submit" class="btn btn-primary w-100 fw-bold">
+                <i class="bi bi-search me-2"></i>{% trans "Buscar" %}
+            </button>
+        </form>
     </div>
 </div>
 
-<div class="container mt-5 mb-5">
-    <h3 class="fw-bold mb-4">{% trans "Vuelos Recomendados" %}</h3>
-    <div class="horizontal-scroll-container">
-        <div class="d-flex flex-row gap-4 py-2">
-            {% if vuelos_sugeridos %}
-                {% for vuelo in vuelos_sugeridos %}
-                    <a href="{% url 'detalles_vuelo' vuelo.id %}" class="text-decoration-none flight-card card rounded-4 shadow-sm h-100">
-                        <img src="{% if vuelo.imagen %}{{ vuelo.imagen.url }}{% else %}{% static 'img/mendoza.png' %}{% endif %}" class="card-img-top" alt="Vuelo a {{ vuelo.destino }}">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold text-dark">{{ vuelo.origen }} → {{ vuelo.destino }}</h5>
-                            <p class="card-text text-muted small flex-grow-1">
-                                {% trans "Salida:" %} {{ vuelo.fecha_salida|date:"d M Y H:i" }}
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <h4 class="fw-bold text-primary mb-0">${{ vuelo.precio_base }}</h4>
-                                <span class="badge bg-light text-dark">{{ vuelo.avion.nombre }}</span>
+<!-- VUELOS RECOMENDADOS -->
+<div class="flights-section container">
+    <h3>{% trans "Vuelos Recomendados" %}</h3>
+    <div class="row g-4">
+        {% if vuelos_sugeridos %}
+            {% for vuelo in vuelos_sugeridos %}
+                <div class="col-md-6 col-lg-4">
+                    <a href="{% url 'detalles_vuelo' vuelo.id %}" class="text-decoration-none">
+                        <div class="flight-card card h-100">
+                            <img src="{% if vuelo.imagen %}{{ vuelo.imagen.url }}{% else %}{% static 'img/mendoza.png' %}{% endif %}" class="card-img-top" alt="Vuelo a {{ vuelo.destino }}">
+                            <div class="card-body">
+                                <h5 class="card-title text-dark">{{ vuelo.origen }} → {{ vuelo.destino }}</h5>
+                                <p class="text-muted small">{% trans "Salida:" %} {{ vuelo.fecha_salida|date:"d M Y H:i" }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <h4 class="fw-bold text-primary mb-0">${{ vuelo.precio_base }}</h4>
+                                    <span class="badge bg-light text-dark">{{ vuelo.avion.nombre }}</span>
+                                </div>
                             </div>
                         </div>
                     </a>
-                {% endfor %}
-            {% else %}
-                <p class="text-center text-muted">{% trans "No hay vuelos disponibles o sugeridos en este momento." %}</p>
-            {% endif %}
-        </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted">{% trans "No hay vuelos disponibles o sugeridos en este momento." %}</p>
+        {% endif %}
     </div>
 </div>
 
-<div class="container mb-5">
-    <h3 class="text-center fw-bold mb-4">{% trans "Acceso Rápido" %}</h3>
+<!-- ACCESO RÁPIDO -->
+<div class="quick-access container">
+    <h3>{% trans "Acceso Rápido" %}</h3>
     <div class="row g-4 justify-content-center">
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'ver_reservas_cliente' %}" class="card-link text-decoration-none">
-                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <i class="bi bi-journal-bookmark-fill card-icon text-success mb-3"></i>
-                        <h5 class="fw-bold text-dark">{% trans "Mis Reservas" %}</h5>
-                        <p class="text-muted mb-0">{% trans "Revisa tus próximas reservas." %}</p>
-                    </div>
+            <a href="{% url 'ver_reservas_cliente' %}" class="text-decoration-none">
+                <div class="card">
+                    <i class="bi bi-journal-bookmark-fill card-icon text-success"></i>
+                    <h5 class="fw-bold text-dark">{% trans "Mis Reservas" %}</h5>
+                    <p class="text-muted mb-0">{% trans "Revisa tus próximas reservas." %}</p>
                 </div>
             </a>
         </div>
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'historial_vuelos_cliente' %}" class="card-link text-decoration-none">
-                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <i class="bi bi-calendar-check-fill card-icon text-secondary mb-3"></i>
-                        <h5 class="fw-bold text-dark">{% trans "Historial de Vuelos" %}</h5>
-                        <p class="text-muted mb-0">{% trans "Mira tus vuelos anteriores." %}</p>
-                    </div>
+            <a href="{% url 'historial_vuelos_cliente' %}" class="text-decoration-none">
+                <div class="card">
+                    <i class="bi bi-calendar-check-fill card-icon text-secondary"></i>
+                    <h5 class="fw-bold text-dark">{% trans "Historial de Vuelos" %}</h5>
+                    <p class="text-muted mb-0">{% trans "Mira tus vuelos anteriores." %}</p>
                 </div>
             </a>
         </div>
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'gestionar_pasajeros' %}" class="card-link text-decoration-none">
-                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <i class="bi bi-person-plus-fill card-icon text-info mb-3"></i>
-                        <h5 class="fw-bold text-dark">{% trans "Gestionar Pasajeros" %}</h5>
-                        <p class="text-muted mb-0">{% trans "Agrega o edita tus pasajeros." %}</p>
-                    </div>
+            <a href="{% url 'gestionar_pasajeros' %}" class="text-decoration-none">
+                <div class="card">
+                    <i class="bi bi-person-plus-fill card-icon text-info"></i>
+                    <h5 class="fw-bold text-dark">{% trans "Gestionar Pasajeros" %}</h5>
+                    <p class="text-muted mb-0">{% trans "Agrega o edita tus pasajeros." %}</p>
                 </div>
             </a>
         </div>
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'ver_vuelos_cliente' %}" class="card-link text-decoration-none">
-                <div class="card text-center h-100 p-4 border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <i class="bi bi-search card-icon text-primary mb-3"></i>
-                        <h5 class="fw-bold text-dark">{% trans "Buscar Vuelos" %}</h5>
-                        <p class="text-muted mb-0">{% trans "Encuentra tu próximo destino." %}</p>
-                    </div>
+            <a href="{% url 'ver_vuelos_cliente' %}" class="text-decoration-none">
+                <div class="card">
+                    <i class="bi bi-search card-icon text-primary"></i>
+                    <h5 class="fw-bold text-dark">{% trans "Buscar Vuelos" %}</h5>
+                    <p class="text-muted mb-0">{% trans "Encuentra tu próximo destino." %}</p>
                 </div>
             </a>
         </div>

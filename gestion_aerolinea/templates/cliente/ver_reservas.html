@@ -6,39 +6,93 @@
 <a href="{% url 'panel_cliente' %}" class="btn btn-outline-secondary mb-4">
     <i class="bi bi-arrow-left me-2"></i> Volver
 </a>
+
 <div class="text-center mb-5">
     <h1 class="display-5 fw-bold text-primary">Mis Reservas</h1>
     <p class="lead text-muted mt-3">Aquí encontrarás todas las reservas que has realizado.</p>
 </div>
 
-<div class="d-flex justify-content-center mb-4">
-    <a href="{% url 'ver_reservas_cliente' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2">
+<div class="d-flex justify-content-center mb-4 flex-wrap">
+    <a href="{% url 'ver_reservas_cliente' %}" class="btn {% if not filtro_activo %}btn-primary{% else %}btn-outline-primary{% endif %} mx-2 my-1">
         Todas
     </a>
-    <a href="{% url 'ver_reservas_cliente_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2">
+    <a href="{% url 'ver_reservas_cliente_filtradas' 'pendiente' %}" class="btn {% if filtro_activo == 'pendiente' %}btn-warning text-dark{% else %}btn-outline-warning{% endif %} mx-2 my-1">
         Pendientes
     </a>
-    <a href="{% url 'ver_reservas_cliente_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2">
+    <a href="{% url 'ver_reservas_cliente_filtradas' 'confirmada' %}" class="btn {% if filtro_activo == 'confirmada' %}btn-success{% else %}btn-outline-success{% endif %} mx-2 my-1">
         Confirmadas
     </a>
-    <a href="{% url 'ver_reservas_cliente_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2">
+    <a href="{% url 'ver_reservas_cliente_filtradas' 'cancelada' %}" class="btn {% if filtro_activo == 'cancelada' %}btn-danger{% else %}btn-outline-danger{% endif %} mx-2 my-1">
         Canceladas
     </a>
 </div>
+
+<style>
+/* Card de reserva */
+.reserva-card {
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.reserva-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* Badges con gradiente */
+.badge-confirmada {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    color: white;
+}
+.badge-pendiente {
+    background: linear-gradient(90deg, #ffc107, #ffca2c);
+    color: #212529;
+}
+.badge-cancelada {
+    background: linear-gradient(90deg, #dc3545, #e55353);
+    color: white;
+}
+
+/* Botones dentro de card */
+.reserva-card .btn {
+    border-radius: 50px;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.reserva-card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* Lista de detalles */
+.reserva-card ul {
+    padding-left: 0;
+    list-style: none;
+}
+.reserva-card ul li {
+    padding: 4px 0;
+}
+
+/* Precio */
+.precio-total {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+</style>
 
 <div class="container py-5">
     {% if reservas %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for reserva in reservas %}
         <div class="col">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100 reserva-card border-0">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title fw-bold text-secondary mb-0">
                             <i class="bi bi-airplane-fill me-2"></i> Vuelo: {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}
                         </h5>
                     </div>
-                    
+
                     <ul class="list-unstyled mb-4">
                         <li class="d-flex justify-content-between">
                             <span class="text-muted"><i class="bi bi-calendar-event me-2"></i> Fecha:</span>
@@ -60,23 +114,23 @@
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         {% if reserva.estado == 'confirmada' %}
-                        <span class="badge bg-success rounded-pill text-uppercase p-2">
+                        <span class="badge badge-confirmada rounded-pill text-uppercase p-2">
                             {{ reserva.get_estado_display }}
                         </span>
-                        <a href="{% url 'ver_boleto' reserva.id %}" class="btn btn-sm btn-primary ">
+                        <a href="{% url 'ver_boleto' reserva.id %}" class="btn btn-sm btn-primary">
                             <i class="bi bi-ticket-perforated me-1"></i> Ver Boleto
                         </a>
                         {% elif reserva.estado == 'pendiente' %}
-                        <span class="badge bg-warning text-dark rounded-pill text-uppercase p-2">
+                        <span class="badge badge-pendiente rounded-pill text-uppercase p-2">
                             {{ reserva.get_estado_display }}
                         </span>
                         {% else %}
-                        <span class="badge bg-danger rounded-pill text-uppercase p-2">
+                        <span class="badge badge-cancelada rounded-pill text-uppercase p-2">
                             {{ reserva.get_estado_display }}
                         </span>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
                         <span class="text-muted fs-6">Precio Total:</span>
                         <span class="fs-5 fw-bold text-primary">${{ reserva.precio_total }}</span>
@@ -116,7 +170,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas cancelar la reserva del vuelo de **{{ reserva.vuelo.origen }}** a **{{ reserva.vuelo.destino }}**?
+                ¿Estás seguro de que deseas cancelar la reserva del vuelo de <strong>{{ reserva.vuelo.origen }}</strong> a <strong>{{ reserva.vuelo.destino }}</strong>?
                 Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
