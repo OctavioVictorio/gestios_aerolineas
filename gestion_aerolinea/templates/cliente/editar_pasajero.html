@@ -11,16 +11,6 @@
         <h2 class="fw-bold text-primary">Editar Pasajero</h2>
         <p class="text-muted">Modifica los datos de {{ pasajero.nombre }} {{ pasajero.apellido }}.</p>
     </div>
-   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dateField = document.getElementById('id_fecha_nacimiento');  // Cambia 'id_fecha_nacimiento' al ID real del campo
-        if (dateField && dateField.value) {
-            // Asegura que la fecha esté en formato YYYY-MM-DD
-            const date = new Date(dateField.value);
-            dateField.value = date.toISOString().split('T')[0];
-        }
-    });
-</script>
 <div class="container py-5">
         <form method="post" novalidate>
             {% csrf_token %}
@@ -43,4 +33,32 @@
         </form>
     </div>
 </div>
+
+<script>
+// Depuración para el campo de fecha de nacimiento
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const fechaField = document.getElementById('id_fecha_nacimiento');
+
+    if (fechaField) {
+        console.log('Campo fecha encontrado:', fechaField);
+        console.log('Valor inicial:', fechaField.value);
+        console.log('Tipo:', fechaField.type);
+
+        // Monitorear cambios en el campo
+        fechaField.addEventListener('change', function() {
+            console.log('Fecha cambió a:', this.value);
+        });
+
+        // Monitorear el envío del formulario
+        form.addEventListener('submit', function(e) {
+            console.log('Formulario enviado');
+            console.log('Valor de fecha al enviar:', fechaField.value);
+            console.log('Form data:', new FormData(form));
+        });
+    } else {
+        console.log('Campo fecha NO encontrado');
+    }
+});
+</script>
 {% endblock %}

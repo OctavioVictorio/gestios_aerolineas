@@ -34,7 +34,14 @@ class PasajeroForm(forms.ModelForm):
         model = Pasajero
         fields = ['nombre', 'apellido', 'tipo_documento', 'numero_documento', 'fecha_nacimiento', 'email', 'telefono']
         widgets = {
-            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_nacimiento': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control',
+                    'format': '%Y-%m-%d'
+                },
+                format='%Y-%m-%d'
+            ),
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control'}),
             'tipo_documento': forms.Select(attrs={'class': 'form-control'}),
@@ -42,6 +49,12 @@ class PasajeroForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean_fecha_nacimiento(self):
+        fecha = self.cleaned_data.get('fecha_nacimiento')
+        if not fecha:
+            raise forms.ValidationError('La fecha de nacimiento es obligatoria.')
+        return fecha
 
 
 class VueloForm(forms.ModelForm):
