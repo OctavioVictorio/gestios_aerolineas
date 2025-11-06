@@ -93,11 +93,11 @@ Sigue estos pasos para tener una copia local del proyecto en funcionamiento.
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [git@github.com:OctavioVictorio/gestios_aerolineas.git]
+    git clone git@github.com:OctavioVictorio/gestios_aerolineas.git
     cd gestios_aerolineas
     ```
     ```bash
-    git clone [[https://github.com/OctavioVictorio/gestios_aerolineas.git](https://github.com/OctavioVictorio/gestios_aerolineas.git)]
+    git clone https://github.com/OctavioVictorio/gestios_aerolineas.git
     cd gestios_aerolineas
     ```
 
@@ -151,4 +151,4 @@ El proyecto solo tiene el panel del cliente y el navbar con traduccion.
 
 ## Alumno
 
-Este proyecto fue desarrollado por [Victorio Octacio].
+Este proyecto fue desarrollado por Gremiger Miqueas, Fasano Agustin y Victorio Octavio
